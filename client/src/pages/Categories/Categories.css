@@ -1,0 +1,30 @@
+.cat-image {
+	width: 360px;
+	height: 360px;
+	transition: all 0.3s ease-in;
+	padding-bottom: 1rem;
+}
+.cats-row {
+	display: flex;
+	align-items: end;
+	justify-content: space-between;
+}
+
+.cats-row .category {
+	width: 360px;
+}
+
+.cat-image:hover {
+	opacity: 0.88;
+	filter: 0 4px 4px 4px rgba(0, 0, 0, 25);
+	transform: scale3d(1.05, 1.05, 1);
+}
+
+.image-container {
+	background: #f9f9f9;
+	height: 460px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}

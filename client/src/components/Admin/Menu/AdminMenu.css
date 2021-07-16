@@ -1,0 +1,19 @@
+#menu {
+	position: fixed;
+	margin-top: 20px;
+	z-index: 1020 !important;
+}
+
+#collapse {
+	background: #591da8;
+	color: white;
+	border: none;
+	outline: none;
+}
+
+#collapse:hover {
+	background: #ee1e90;
+}
+#options {
+	background: #591da8;
+}
