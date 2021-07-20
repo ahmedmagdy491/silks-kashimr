@@ -16,9 +16,7 @@ import Message from '../../components/Message';
 const CartScreen = ({ match, location, history }) => {
 	const productSlug = match.params.slug;
 
-	const quantity = location.search
-		? Number(location.search.split('=')[1])
-		: 1;
+	const qty = location.search ? Number(location.search.split('=')[1]) : 1;
 
 	const dispatch = useDispatch();
 
@@ -27,9 +25,9 @@ const CartScreen = ({ match, location, history }) => {
 
 	useEffect(() => {
 		if (productSlug) {
-			dispatch(addToCart(productSlug, quantity));
+			dispatch(addToCart(productSlug, qty));
 		}
-	}, [dispatch, productSlug, quantity]);
+	}, [dispatch, productSlug, qty]);
 
 	const removeFromCartHandler = (slug) => {
 		dispatch(removeFromCart(slug));
@@ -69,7 +67,7 @@ const CartScreen = ({ match, location, history }) => {
 									<Col md={2}>
 										<Form.Control
 											as="select"
-											value={item.quantity}
+											value={item.qty}
 											onChange={(e) =>
 												dispatch(
 													addToCart(
@@ -118,7 +116,7 @@ const CartScreen = ({ match, location, history }) => {
 								<h2>
 									Subtotal (
 									{cartItems.reduce(
-										(acc, item) => acc + item.quantity,
+										(acc, item) => acc + item.qty,
 										0
 									)}
 									) items
@@ -127,7 +125,7 @@ const CartScreen = ({ match, location, history }) => {
 								{cartItems
 									.reduce(
 										(acc, item) =>
-											acc + item.quantity * item.price,
+											acc + item.qty * item.price,
 										0
 									)
 									.toFixed(2)}

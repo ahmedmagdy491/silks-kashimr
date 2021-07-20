@@ -1,63 +1,153 @@
 import React, { Fragment, useState } from 'react';
-import { Drawer, Form, Button, Col, Row, Input } from 'antd';
+import {
+	Drawer,
+	Form,
+	Button,
+	Col,
+	Row,
+	Input,
+	message,
+	Upload,
+	Alert,
+} from 'antd';
 import { AiOutlinePlus } from 'react-icons/ai';
-import FileUpload from '../../../FileUploader/FileUpload';
+import { createCatAction } from '../../../../actions/catActions';
+import { useDispatch, useSelector } from 'react-redux';
+import ImgCrop from 'antd-img-crop';
+import { AiOutlineInbox } from 'react-icons/ai';
+import './Create.css';
+import AdminMenu from '../../Menu/AdminMenu';
+const { Dragger } = Upload;
 
-const Create = () => {
-	const [visible, setVisible] = useState(true);
+const Create = ({ onCatClose, visible }) => {
+	const [name, setName] = useState('');
+	const [image, setImage] = useState('');
 
-	const showDrawer = () => {
-		setVisible(true);
+	let url = `${process.env.REACT_APP_API}/uploadimages`;
+	const { createCat } = useSelector((state) => ({ ...state }));
+	const { cat } = createCat;
+	const { err, loading } = cat;
+
+	const props = {
+		name: 'file',
+		multiple: true,
+		action: url,
+		onChange(info) {
+			const { status } = info.file;
+			if (status !== 'uploading') {
+				console.log('Image Info --->', info.file.name);
+			}
+			if (status === 'done') {
+				message.success(
+					`${info.file.name} file uploaded successfully.`
+				);
+				setImage(info.file.name);
+			} else if (status === 'error') {
+				message.error(`${info.file.name} file upload failed.`);
+			}
+		},
+		onDrop(e) {
+			console.log('Dropped files', e.dataTransfer.files);
+			e.preventDefault();
+		},
 	};
-	const onClose = (e) => {
-		setVisible(false);
+
+	let dispatch = useDispatch();
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		if (err) {
+			console.log('ERROR ====>', err);
+			message.error(err);
+		}
+		dispatch(createCatAction(name, image));
 	};
 
 	return (
 		<>
-			<Button type="primary" onClick={showDrawer}>
-				<AiOutlinePlus /> New Category
-			</Button>
 			<Drawer
 				title="Create a new category"
-				width={720}
-				onClose={onClose}
+				width={400}
+				onClose={onCatClose}
 				visible={visible}
 				bodyStyle={{ paddingBottom: 80 }}
+				className="drawer"
 				footer={
 					<div
 						style={{
 							textAlign: 'right',
 						}}
 					>
-						<Button onClick={onClose} style={{ marginRight: 8 }}>
+						<Button
+							onClick={onCatClose}
+							style={{ marginRight: 8 }}
+							id="close"
+						>
 							Cancel
 						</Button>
-						<Button onClick={onClose} type="primary">
-							Submit
+						<Button
+							type="primary"
+							onClick={handleSubmit}
+							id="submit-btn"
+						>
+							Create Category
 						</Button>
 					</div>
 				}
 			>
-				<Form layout="vertical" hideRequiredMark>
+				<Form layout="vertical" hideRequiredMark className="pt-5">
 					<Row gutter={16}>
-						<Col span={12}>
+						<Col>
+							<h3>Create Category</h3>
+							{err ? (
+								<Alert message={err} type="error" showIcon />
+							) : (
+								cat &&
+								cat.name && (
+									<Alert
+										message="category has been created successfully"
+										type="success"
+										showIcon
+									/>
+								)
+							)}
 							<Form.Item
 								name="name"
-								label="Name"
+								label="Category Name"
 								rules={[
 									{
 										required: true,
-										message: 'Please enter category name',
+										message: 'Category name is required',
 									},
 								]}
 							>
-								<Input placeholder="Please enter category name" />
+								<Input
+									placeholder="Please enter category name"
+									onChange={(e) => setName(e.target.value)}
+									required
+								/>
 							</Form.Item>
 						</Col>
 					</Row>
+					<Row gutter={16}>
+						<Col>
+							<ImgCrop rotate>
+								<Dragger
+									{...props}
+									listType="picture-card"
+									required
+								>
+									<p className="ant-upload-drag-icon">
+										<AiOutlineInbox />
+									</p>
+									<p className="ant-upload-text">
+										Click or drag file to this area to
+										upload
+									</p>
+								</Dragger>
+							</ImgCrop>
+						</Col>
+					</Row>
 				</Form>
-				<FileUpload />
 			</Drawer>
 		</>
 	);

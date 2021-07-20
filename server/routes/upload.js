@@ -5,6 +5,7 @@ const router = express.Router();
 const uploadImgs = require('../controllers/Upload/uploadMultipleImg.js');
 
 router.post('/uploadimages', uploadImgs.array('file'), (req, res, next) => {
+	// console.log(req.files);
 	res.end();
 });
 module.exports = router;

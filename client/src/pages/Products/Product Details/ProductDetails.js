@@ -8,12 +8,14 @@ import AppoveScreen from './AppoveScreen';
 import TabsLayout from './Tabs/Tabs';
 import '../assets/Product.css';
 
+import RateForm from './Rate';
+
 const ProductDetails = ({ match }) => {
 	const dispatch = useDispatch();
 	const { productDetails, catProductList } = useSelector((state) => ({
 		...state,
 	}));
-	const { loading, error, productInfo } = productDetails;
+	const { loading, productInfo } = productDetails;
 	const { products } = catProductList;
 
 	useEffect(() => {
@@ -22,15 +24,19 @@ const ProductDetails = ({ match }) => {
 	}, [dispatch, match]);
 
 	return (
-		<div className="product-details-screen">
+		<div>
 			{loading ? (
 				<Loader />
 			) : (
 				productInfo && (
-					<div className="w-100">
+					<div>
 						<AppoveScreen productInfo={productInfo} />
 						<hr />
-						<TabsLayout />
+						<TabsLayout
+							description={productInfo.description}
+							reviews={productInfo.reviews}
+						/>
+						<RateForm />
 						<RelatedProducts products={products} />
 					</div>
 				)

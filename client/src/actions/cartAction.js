@@ -6,7 +6,7 @@ import {
 	CART_SAVE_SHIPPING_ADDRESS,
 } from '../constants/cartConst';
 let url = process.env.REACT_APP_API;
-export const addToCart = (slug, quantity) => async (dispatch, getState) => {
+export const addToCart = (slug, qty) => async (dispatch, getState) => {
 	const { data } = await axios.get(`${url}/product/${slug}`);
 	dispatch({
 		type: CART_ADD_ITEM,
@@ -16,7 +16,7 @@ export const addToCart = (slug, quantity) => async (dispatch, getState) => {
 			image: data.image,
 			price: data.price,
 			available: data.quantity - data.sold,
-			quantity,
+			qty,
 		},
 	});
 

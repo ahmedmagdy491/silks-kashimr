@@ -1,18 +1,26 @@
 import React from 'react';
-import { RiMoneyEuroCircleLine } from 'react-icons/ri';
+import { BiEuro } from 'react-icons/bi';
+import { Row, Col } from 'react-bootstrap';
+import Rating from '../../../components/Ratings/Ratings';
 
 const Details = ({ product }) => {
 	return (
-		<div>
-			<h5>{product.name}</h5>
-			<h6 style={{ fontWeight: 'bold' }}>
-				<RiMoneyEuroCircleLine
-					style={{ fontSize: '1.5rem', color: '#591DA8' }}
-				/>{' '}
-				{product.price}
-			</h6>
-			<h6>ratings</h6>
-		</div>
+		<Col>
+			<Row className="justify-content-around">
+				<div className="h5">{product.name}</div>
+				<div className="h5 row align-items-center">
+					{product.price}
+					{'  '}
+
+					<BiEuro className="mt-1" />
+				</div>
+			</Row>
+			<Row className="justify-content-center h5">
+				<div>
+					<Rating value={product.rating} />
+				</div>
+			</Row>
+		</Col>
 	);
 };
 

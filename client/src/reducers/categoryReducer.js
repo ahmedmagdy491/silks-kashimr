@@ -5,6 +5,9 @@ import {
 	CAT_PRODUCT_LIST_REQUEST,
 	CAT_PRODUCT_LIST_SUCCESS,
 	CAT_PRODUCT_LIST_FAIL,
+	CREATE_CAT_REQUEST,
+	CREATE_CAT_SUCCESS,
+	CREATE_CAT_FAIL,
 } from '../constants/catConst';
 
 export const catListReducer = (state = { cats: [] }, action) => {
@@ -27,6 +30,19 @@ export const catProductListReducer = (state = { products: [] }, action) => {
 		case CAT_PRODUCT_LIST_SUCCESS:
 			return { loading: false, products: action.payload };
 		case CAT_PRODUCT_LIST_FAIL:
+			return { loading: false, error: action.payload };
+		default:
+			return state;
+	}
+};
+
+export const createCatReducer = (state = { cat: {} }, action) => {
+	switch (action.type) {
+		case CREATE_CAT_REQUEST:
+			return { loading: true, cat: {} };
+		case CREATE_CAT_SUCCESS:
+			return { loading: false, cat: action.payload };
+		case CREATE_CAT_FAIL:
 			return { loading: false, error: action.payload };
 		default:
 			return state;

@@ -9,7 +9,8 @@ const { readdirSync } = require('fs');
 const path = require('path');
 const bodyParser = require('body-parser');
 const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
-app.use(express.static(path.join(__dirname, 'public/uploads/')));
+
+app.use(express.static(path.join(__dirname, '/public')));
 
 app.use(express.json());
 

@@ -1,42 +1,46 @@
-import React, { useState } from 'react';
-import { Upload } from 'antd';
+import React from 'react';
+import { message, Upload } from 'antd';
 import ImgCrop from 'antd-img-crop';
-
+import { AiOutlineInbox } from 'react-icons/ai';
+const { Dragger } = Upload;
 const FileUpload = () => {
-	const [fileList, setFileList] = useState([]);
-	const onChange = ({ fileList: newFileList, event }) => {
-		setFileList(newFileList);
-		console.log(event);
-	};
-
-	const onPreview = async (file) => {
-		let src = file.url;
-		if (!src) {
-			src = await new Promise((resolve) => {
-				const reader = new FileReader();
-				reader.readAsDataURL(file.originFileObj);
-				reader.onload = () => resolve(reader.result);
-			});
-		}
-		const image = new Image();
-		image.src = src;
-		const imgWindow = window.open(src);
-		imgWindow.document.write(image.outerHTML);
-	};
-
 	let url = `${process.env.REACT_APP_API}/uploadimages`;
+
+	const props = {
+		name: 'file',
+		multiple: true,
+		action: url,
+		onChange(info) {
+			const { status } = info.file;
+			if (status !== 'uploading') {
+				console.log('Image Info --->', info.file.name);
+			}
+			if (status === 'done') {
+				message.success(
+					`${info.file.name} file uploaded successfully.`
+				);
+				localStorage.setItem('image', JSON.stringify(info.file.name));
+			} else if (status === 'error') {
+				message.error(`${info.file.name} file upload failed.`);
+			}
+		},
+		onDrop(e) {
+			console.log('Dropped files', e.dataTransfer.files);
+			e.preventDefault();
+		},
+	};
+
 	return (
 		<>
 			<ImgCrop rotate>
-				<Upload
-					action={url}
-					listType="picture-card"
-					fileList={fileList}
-					onChange={onChange}
-					onPreview={onPreview}
-				>
-					{fileList.length < 5 && '+ Upload'}
-				</Upload>
+				<Dragger {...props} listType="picture-card">
+					<p className="ant-upload-drag-icon">
+						<AiOutlineInbox />
+					</p>
+					<p className="ant-upload-text">
+						Click or drag file to this area to upload
+					</p>
+				</Dragger>
 			</ImgCrop>
 		</>
 	);

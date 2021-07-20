@@ -7,64 +7,75 @@ import { login } from '../../actions/userActions';
 import Message from '../../components/Message';
 import Loader from '../../components/Loader/Loader';
 
-const SignUpScreen = ({ history }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+const SignUpScreen = ({ history, location }) => {
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
 
-    const dispatch = useDispatch();
+	const dispatch = useDispatch();
 
-    const userLogin = useSelector((state) => state.userLogin);
-    const { loading, userInfo, error } = userLogin;
+	const userLogin = useSelector((state) => state.userLogin);
+	const { loading, userInfo, error } = userLogin;
 
-    // useEffect(() => {
-    //     if (userInfo) {
-    //         history.push('/');
-    //     }
-    // }, [userInfo, history]);
+	const redirect = location.search ? location.search.split('=')[1] : '/';
 
-    const submitHandler = (e) => {
-        e.preventDefault();
+	useEffect(() => {
+		if (userInfo) {
+			history.push(redirect);
+		}
+	}, [userInfo, history, redirect]);
 
-        dispatch(login(email, password));
-    };
+	const submitHandler = (e) => {
+		e.preventDefault();
 
-    return (
-        <div className='form-container'>
-            <h1>Login</h1>
-            {error && <Message variant='danger'>{error}</Message>}
-            {loading && <Loader />}
-            <form className='signup-form' onSubmit={submitHandler}>
-                <div className='content'>
-                    <label htmlFor='email'>Email</label>
-                    <input
-                        type='email'
-                        name='email'
-                        id='email'
-                        placeholder='Enter Email'
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        required
-                    />
-                    <label htmlFor='password'>Password</label>
-                    <input
-                        type='password'
-                        name='password'
-                        id='password'
-                        placeholder='Enter Password'
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                    />
-                </div>
-                <button className='signup-button' type='submit'>
-                    LOGIN
-                </button>
-                <p className='signup-p'>
-                    Don’t Have an Account? <Link to='/signup'>Sign Up</Link>{' '}
-                </p>
-            </form>
-        </div>
-    );
+		dispatch(login(email, password));
+	};
+
+	return (
+		<div className="form-container">
+			<h1>Login</h1>
+			{error && <Message variant="danger">{error}</Message>}
+			{loading && <Loader />}
+			<form className="signup-form" onSubmit={submitHandler}>
+				<div className="content">
+					<label htmlFor="email">Email</label>
+					<input
+						type="email"
+						name="email"
+						id="email"
+						placeholder="Enter Email"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						required
+					/>
+					<label htmlFor="password">Password</label>
+					<input
+						type="password"
+						name="password"
+						id="password"
+						placeholder="Enter Password"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+						required
+					/>
+				</div>
+				<button className="signup-button" type="submit">
+					LOGIN
+				</button>
+				<p className="signup-p">
+					Don’t Have an Account?{' '}
+					<Link
+						to={
+							redirect
+								? `/signup?redirect=${redirect}`
+								: '/signup'
+						}
+					>
+						Sign Up
+					</Link>{' '}
+				</p>
+			</form>
+		</div>
+	);
 };
 
 export default SignUpScreen;

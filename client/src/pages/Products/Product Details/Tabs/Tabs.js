@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tabs } from 'antd';
+import { Tabs, Timeline } from 'antd';
 const { TabPane } = Tabs;
 
 const TabsLayout = ({ reviews, description }) => {
@@ -10,7 +10,12 @@ const TabsLayout = ({ reviews, description }) => {
 					{description}
 				</TabPane>
 				<TabPane tab="Reviews" key="Reviews">
-					{reviews}
+					<Timeline>
+						{reviews &&
+							reviews.map((r) => (
+								<Timeline.Item>{r.comment}</Timeline.Item>
+							))}
+					</Timeline>
 				</TabPane>
 			</Tabs>
 		</div>

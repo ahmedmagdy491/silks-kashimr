@@ -13,18 +13,19 @@ const Landing = () => {
 	useEffect(() => {
 		dispatch(listCats());
 	}, [dispatch]);
-	console.log(cats);
 	return (
 		<Fragment>
 			{loading ? (
 				<Loader />
 			) : (
-				<div className="landing">
-					<div className="panner-container">
-						<Panner cats={cats} className="panner" />
+				cats && (
+					<div className="landing">
+						<div className="panner-container">
+							<Panner cats={cats} className="panner" />
+						</div>
+						<Categories cats={cats} />
 					</div>
-					<Categories cats={cats} className="categories" />
-				</div>
+				)
 			)}
 		</Fragment>
 	);

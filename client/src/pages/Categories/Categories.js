@@ -1,21 +1,19 @@
-import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import React from 'react';
 import Category from './Category';
-import { Row, Col } from 'antd';
+import { Row } from 'antd';
 import './Categories.css';
 const Categories = ({ cats }) => {
 	return (
-		<div className="cats-row">
+		<Row className="justify-content-center">
 			{cats &&
 				cats.map((cat) => (
 					<Category
 						image={cat.image}
 						name={cat.name}
 						slug={cat.slug}
-						className="category"
 					/>
 				))}
-		</div>
+		</Row>
 	);
 };
 

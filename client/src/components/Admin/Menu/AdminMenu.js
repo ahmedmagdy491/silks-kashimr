@@ -10,8 +10,8 @@ import {
 import './AdminMenu.css';
 
 const { SubMenu } = Menu;
-const AdminMenu = () => {
-	const [collapsed, setCollapsed] = useState(false);
+const AdminMenu = ({ showProductDrawer, showCatDrawer }) => {
+	const [collapsed, setCollapsed] = useState(true);
 	const toggleCollapsed = () => {
 		setCollapsed(!collapsed);
 	};
@@ -28,8 +28,8 @@ const AdminMenu = () => {
 				)}
 			</Button>
 			<Menu
-				defaultSelectedKeys={['1']}
-				defaultOpenKeys={['sub1']}
+				// defaultSelectedKeys={['1']}
+				// defaultOpenKeys={['sub1']}
 				mode="inline"
 				theme="dark"
 				inlineCollapsed={collapsed}
@@ -37,10 +37,15 @@ const AdminMenu = () => {
 			>
 				<SubMenu
 					key="sub1"
+					className="sub"
 					icon={<AiOutlineRight />}
-					title="Navigation One"
+					title="Category"
 				>
-					<Menu.Item key="5" icon={<AiOutlineFileAdd />}>
+					<Menu.Item
+						key="5"
+						onClick={showCatDrawer}
+						icon={<AiOutlineFileAdd />}
+					>
 						Create Category
 					</Menu.Item>
 					<Menu.Item key="6" icon={<AiOutlineEdit />}>
@@ -50,10 +55,14 @@ const AdminMenu = () => {
 				<SubMenu
 					key="sub2"
 					icon={<AiOutlineRight />}
-					title="Navigation Two"
+					title="Product"
 					id="options"
 				>
-					<Menu.Item key="9" icon={<AiOutlineFileAdd />}>
+					<Menu.Item
+						key="9"
+						onClick={showProductDrawer}
+						icon={<AiOutlineFileAdd />}
+					>
 						Create Product
 					</Menu.Item>
 					<Menu.Item key="10" icon={<AiOutlineEdit />}>

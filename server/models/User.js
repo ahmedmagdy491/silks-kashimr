@@ -21,12 +21,10 @@ const userSchema = mongoose.Schema(
 			required: true,
 			default: false,
 		},
-		cart: {
-			type: Array,
-			default: [],
-		},
 		address: String,
-		// wishlist: [{ type: ObjectId, ref: 'Product' }],
+		wishlist: {
+			type: Array,
+		},
 	},
 	{
 		timestamps: true,

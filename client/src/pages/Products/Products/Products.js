@@ -4,6 +4,7 @@ import '../assets/Product.css';
 import { listCatProduct } from '../../../actions/catActions';
 import Skeleton from './../../../components/Loader/Skeleton';
 import Product from './Product';
+import { Row } from 'react-bootstrap';
 
 const Products = ({ match }) => {
 	const dispatch = useDispatch();
@@ -13,10 +14,10 @@ const Products = ({ match }) => {
 
 	useEffect(() => {
 		dispatch(listCatProduct(catSlug));
-	}, [dispatch, match]);
+	}, [dispatch, match, catSlug]);
 
 	return (
-		<div className="row">
+		<Row>
 			{loading ? (
 				<Skeleton />
 			) : (
@@ -26,11 +27,10 @@ const Products = ({ match }) => {
 						key={product._id}
 						product={product}
 						catSlug={catSlug}
-						productSlug={product.slug}
 					/>
 				))
 			)}
-		</div>
+		</Row>
 	);
 };
 

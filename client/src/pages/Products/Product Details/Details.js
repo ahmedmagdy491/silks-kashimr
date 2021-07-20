@@ -1,31 +1,32 @@
-import React, { Fragment, useState } from 'react';
-import { Alert, Row } from 'react-bootstrap';
-import { Button } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Alert, Col, Row } from 'react-bootstrap';
 import { AiOutlineHeart, AiOutlineShoppingCart } from 'react-icons/ai';
-import { FaCheckCircle, FaEuroSign } from 'react-icons/fa';
+import { FaCheckCircle } from 'react-icons/fa';
+import { BiEuro } from 'react-icons/bi';
 import { useHistory, useParams } from 'react-router-dom';
+import { Select, Button } from 'antd';
+import { Option } from 'antd/lib/mentions';
+import '../assets/Product.css';
 const Details = ({ productInfo }) => {
-	const [quantity, setQuantity] = useState(0);
+	const [quantity, setQuantity] = useState();
 	let available = productInfo && productInfo.quantity - productInfo.sold;
 
 	const history = useHistory();
 	const params = useParams();
 	console.log(params);
 	const addItem = () => {
-		history.push(`/cart/${params.productSlug}?quantity=${quantity}`);
+		history.push(`/cart/${params.productSlug}?qty=${quantity}`);
 	};
 	return (
-		<div>
-			<h1 className="text-center">{productInfo.name}</h1>
-			<Row className="justify-content-between ">
-				<div
-					style={{
-						fontSize: '1rem',
-						fontWeight: 'bold',
-					}}
-				>
-					<FaEuroSign /> {productInfo.price}
+		<Col className="align-items-center">
+			<Row className="justify-content-between h1">
+				<div>{productInfo.name}</div>
+				<div>
+					{productInfo.price}
+					<BiEuro className="mb-1" />
 				</div>
+			</Row>
+			<Row className="justify-content-between pb-4">
 				{available !== 0 && (
 					<div className="text-success font-weight-bolder">
 						<FaCheckCircle
@@ -34,40 +35,48 @@ const Details = ({ productInfo }) => {
 						IN STOCK
 					</div>
 				)}
+				<AiOutlineHeart className="heart" />
 			</Row>
-			<h5 className="text-warning">
+			<h5 className="text-warning ">
 				{available <= 8 && (
 					<Alert variant="warning">
 						The product is available with only {available} pieces
 					</Alert>
 				)}
 			</h5>
+			<Row className="justify-content-between p-3">
+				<Button
+					type="primary"
+					shape="round"
+					icon={<AiOutlineShoppingCart />}
+					size="large"
+					onClick={addItem}
+				>
+					{'  '} Add to cart
+				</Button>
 
-			<Button variant="" className="mt-3 text-danger">
-				<AiOutlineHeart /> Add to wishlist
-			</Button>
-			<Button
-				variant="outline-info ml-3"
-				className="mt-3"
-				onClick={addItem}
-				disabled={productInfo.quantity === 0}
-			>
-				<AiOutlineShoppingCart /> Add to Cart
-			</Button>
-			<select
-				value={quantity}
-				onChange={(e) => {
-					setQuantity(e.target.value);
-				}}
-			>
-				{[...Array(available).keys()].map((x) => (
-					<option key={x + 1} value={x + 1}>
-						{x + 1}
-					</option>
-				))}
-				<option></option>
-			</select>
-		</div>
+				<Select
+					className="mt-1"
+					showSearch
+					style={{ width: 200 }}
+					placeholder="Quantity"
+					optionFilterProp="children"
+					onChange={(value) => setQuantity(value)}
+					value={quantity}
+					filterOption={(input, option) =>
+						option.children
+							.toLowerCase()
+							.indexOf(input.toLowerCase()) >= 0
+					}
+				>
+					{[...Array(available).keys()].map((x) => (
+						<Option key={x + 1} value={x + 1}>
+							{x + 1}
+						</Option>
+					))}
+				</Select>
+			</Row>
+		</Col>
 	);
 };
 

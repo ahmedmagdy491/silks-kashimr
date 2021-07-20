@@ -3,7 +3,9 @@ const Async = require('express-async-handler');
 const slugify = require('slugify');
 
 const createCategory = Async(async (req, res) => {
-	const { name, image } = req.body;
+	const { name } = req.body;
+	const image = '/public/uploads/' + req.body.image;
+
 	if (await Category.findOne({ name }))
 		res.json({ err: 'The category already exists' });
 	res.json(await new Category({ name, image, slug: slugify(name) }).save());

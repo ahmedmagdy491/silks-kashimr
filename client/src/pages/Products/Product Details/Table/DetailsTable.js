@@ -5,8 +5,8 @@ import Tbody from './Tbody';
 const DetailsTable = ({ productInfo }) => {
 	return (
 		<Table striped bordered hover className="mt-3">
-			<Theader />
-			<Tbody productInfo={productInfo} />
+			<Theader productInfo={productInfo} />
+			{/* <Tbody productInfo={productInfo} /> */}
 		</Table>
 	);
 };
