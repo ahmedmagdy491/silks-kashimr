@@ -5,11 +5,17 @@ const {
 	getCatProduct,
 	getProductDetails,
 	createProductReview,
+	updateProduct,
+	deleteProduct,
 } = require('../controllers/Product/productController');
-const { protect } = require('../middlewares/authMiddleware');
+const { protect, admin } = require('../middlewares/authMiddleware');
 router.route('/product').post(createProduct).get(getProducts);
 router.route('/cat/:slug').get(getCatProduct);
-router.route('/product/:slug').get(getProductDetails);
+router
+	.route('/product/:slug')
+	.get(getProductDetails)
+	.put(updateProduct)
+	.delete(protect, admin, deleteProduct);
 router.route('/product/:slug/reviews').post(protect, createProductReview);
 
 module.exports = router;

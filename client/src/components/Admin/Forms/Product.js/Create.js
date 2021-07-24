@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Drawer,
 	Form,
@@ -15,9 +15,7 @@ import { listCats } from '../../../../actions/catActions';
 import { useDispatch, useSelector } from 'react-redux';
 import ImgCrop from 'antd-img-crop';
 import { AiOutlineInbox } from 'react-icons/ai';
-import AdminMenu from '../../Menu/AdminMenu';
 import { productCreateAction } from '../../../../actions/productActions';
-import axios from 'axios';
 
 const { Dragger } = Upload;
 const { Option } = Select;
@@ -27,21 +25,10 @@ const CreateProduct = ({ onProductClose, visible }) => {
 	const props = {
 		name: 'file',
 		multiple: true,
-		// action: url,
+		action: url,
 		async onChange(info) {
 			const { status } = info.file;
-			// const formData = new FormData('file', );
-			// console.log(formData);
-			await axios
-				.post(url, info)
-				.then((res) => {
-					console.log('RES--->', res.data);
-				})
-				.catch((err) => {
-					console.log(err);
-				});
 			if (status !== 'uploading') {
-				console.log('Image Info --->', info);
 			}
 			if (status === 'done') {
 				message.success(`${info.files} file uploaded successfully.`);
@@ -52,18 +39,16 @@ const CreateProduct = ({ onProductClose, visible }) => {
 			}
 		},
 		onDrop(e) {
-			console.log('Dropped files', e.dataTransfer.files);
 			e.preventDefault();
 		},
 	};
 
 	const [name, setName] = useState();
-	const [images, setImages] = useState([]);
+	const [images, setImages] = useState();
 	const [description, setDescription] = useState();
 	const [price, setPrice] = useState();
 	const [category, setCategory] = useState();
 	const [qty, setQty] = useState();
-	const [shipping, setShipping] = useState();
 	const [color, setColor] = useState();
 	const [brand, setBrand] = useState();
 
@@ -90,18 +75,16 @@ const CreateProduct = ({ onProductClose, visible }) => {
 				price,
 				category,
 				quantity: qty,
-				shipping,
 				color,
 				brand,
 				images,
 			})
 		);
 	};
-	console.log('The Images -->', images);
 	return (
 		<>
 			<Drawer
-				title="Create a new account"
+				title="Create a new product"
 				width={500}
 				onClose={onProductClose}
 				visible={visible}
@@ -204,16 +187,7 @@ const CreateProduct = ({ onProductClose, visible }) => {
 							onChange={(e) => setQty(e)}
 						/>
 					</Form.Item>
-					<Form.Item>
-						<Select
-							placeholder="shipping"
-							value={shipping}
-							onChange={(e) => setShipping(e)}
-						>
-							<Select.Option value="Yes">Yes</Select.Option>
-							<Select.Option value="No">No</Select.Option>
-						</Select>
-					</Form.Item>
+
 					<Form.Item>
 						<Input
 							placeholder="brand"

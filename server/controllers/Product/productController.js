@@ -9,6 +9,27 @@ const createProduct = Async(async (req, res) => {
 	res.json(await new Product(req.body).save());
 });
 
+const updateProduct = Async(async (req, res) => {
+	const slug = req.params.slug;
+	if (req.body.name) {
+		req.body.slug = slugify(req.body.name);
+	}
+	const updated = await Product.findOneAndUpdate({ slug }, req.body, {
+		new: true,
+	}).exec();
+	res.json({
+		success: true,
+		updated,
+	});
+});
+
+const deleteProduct = Async(async (req, res) => {
+	const { slug } = req.params;
+	const product = await Product.findOne({ slug });
+	await product.remove();
+	res.json(product);
+});
+
 const getProducts = Async(async (req, res) => {
 	let products = await Product.find()
 		.sort([['cratedAt', 'desc']])
@@ -76,4 +97,6 @@ module.exports = {
 	getCatProduct,
 	getProductDetails,
 	createProductReview,
+	updateProduct,
+	deleteProduct,
 };

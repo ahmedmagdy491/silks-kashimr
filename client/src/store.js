@@ -11,18 +11,19 @@ import {
 	productListReducer,
 	productDetailsReducer,
 	productReviewCreateReducer,
+	productUpdateReducer,
 } from './reducers/productReducer';
 
 import { cartReducer } from './reducers/cartReducer';
 import {
-	userSignUpReducer,
-	userLoginReducer,
 	userDetailsReducer,
 	userUpdateProfileReducer,
 	userListReducer,
 	userDeleteReducer,
 	userUpdateReducer,
 	addToWishListReducer,
+	createOrUpdateUserReducer,
+	currentUserReducer,
 } from './reducers/userReducers.js';
 
 import {
@@ -34,15 +35,17 @@ import {
 	orderPayReducer,
 } from './reducers/orderReducer';
 const reducer = combineReducers({
-	userSignup: userSignUpReducer,
-	userLogin: userLoginReducer,
+	userLogin: currentUserReducer,
 	userDetails: userDetailsReducer,
 	userUpdateProfile: userUpdateProfileReducer,
+	createOrUpdateUser: createOrUpdateUserReducer,
 	userList: userListReducer,
 	userDelete: userDeleteReducer,
 	userUpdate: userUpdateReducer,
+	addToWishList: addToWishListReducer,
 	catList: catListReducer,
 	productCreate: productCreateReducer,
+	productUpdate: productUpdateReducer,
 	productList: productListReducer,
 	catProductList: catProductListReducer,
 	productDetails: productDetailsReducer,
@@ -55,7 +58,6 @@ const reducer = combineReducers({
 	orderDeliver: orderDeliverReducer,
 	orderListMy: orderListMyReducer,
 	orderList: orderListReducer,
-	addToWishList: addToWishListReducer,
 });
 
 const userInfoFromStorge = localStorage.getItem('userInfo')

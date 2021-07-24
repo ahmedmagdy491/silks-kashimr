@@ -1,28 +1,42 @@
 const multer = require('multer');
 const sharp = require('sharp');
-const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
-		cb(null, path.join(__dirname, '..', '..', '/public/uploads'));
+		cb(null, 'uploads/');
 	},
 	filename: function (req, file, cb) {
-		cb(null, `${file.originalname}${path.extname(file.originalname)}`);
+		cb(
+			null,
+			`${file.originalname}-${Date.now()}${path.extname(
+				file.originalname
+			)}`
+		);
 	},
 });
+function checkFileType(file, cb) {
+	const filetypes = /jpg|jpeg|png/;
+	const extname = filetypes.test(
+		path.extname(file.originalname).toLowerCase()
+	);
+	const mimetype = filetypes.test(file.mimetype);
+
+	if (extname && mimetype) {
+		return cb(null, true);
+	} else {
+		cb('Images only!');
+	}
+}
 
 const uploadImgs = multer({
 	limits: {
-		fileSize: 10_000_000,
+		fileSize: 15_000_000,
 	},
-	fileFilter(req, file, cb) {
-		if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
-			return cb(new Error('Please upload a png, jpg or jpeg image.'));
-		}
+	fileFilter: function (req, file, cb) {
+		checkFileType(file, cb);
+	},
 
-		cb(undefined, true);
-	},
 	storage: storage,
 });
 

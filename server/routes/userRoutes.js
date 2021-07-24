@@ -9,6 +9,9 @@ const {
 	updateUser,
 	getUsers,
 	addToWishList,
+	getWishes,
+	createOrUpdateUser,
+	currentUser,
 } = require('../controllers/User/userController.js');
 
 const { admin, protect } = require('../middlewares/authMiddleware.js');
@@ -25,6 +28,11 @@ router
 	.delete(protect, admin, deleteUser)
 	.get(protect, admin, getUserById)
 	.put(protect, admin, updateUser);
-router.route('/user/wishlist').post(protect, addToWishList);
+router.route('/wishlist').post(protect, addToWishList);
+router.route('/wishes').get(protect, getWishes);
+
+router.post('/create-or-update-user', protect, createOrUpdateUser);
+router.post('/current-user', protect, currentUser);
+router.post('/current-admin', protect, admin, currentUser);
 
 module.exports = router;

@@ -33,9 +33,14 @@ const productSchema = new mongoose.Schema(
 			required: true,
 			// maxlength: 150,
 		},
-		price: {
+		originalPrice: {
 			type: Number,
 			required: true,
+			maxlength: 2000,
+			text: true,
+		},
+		discountPrice: {
+			type: Number,
 			maxlength: 2000,
 			text: true,
 		},
@@ -54,6 +59,7 @@ const productSchema = new mongoose.Schema(
 		shipping: {
 			type: String,
 			enum: ['Yes', 'No'],
+			default: 'Yes',
 			required: true,
 		},
 		color: {

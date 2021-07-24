@@ -95,6 +95,30 @@ export const userUpdateReducer = (state = { user: {} }, action) => {
 	}
 };
 
+export const createOrUpdateUserReducer = (state = {}, action) => {
+	switch (action.type) {
+		case 'USER_CREATE_OR_UPDATE_SUCCESS':
+			return action.payload;
+		case 'USER_CREATE_OR_UPDATE_FAIL':
+			return action.payload;
+		default:
+			return state;
+	}
+};
+
+export const currentUserReducer = (state = { user: {} }, action) => {
+	switch (action.type) {
+		case 'CURRENT_USER_SUCCESS':
+			return action.payload;
+		case 'CURRENT_USER_FAIL':
+			return action.payload;
+		case 'LOGOUT':
+			return action.payload;
+		default:
+			return state;
+	}
+};
+
 export const addToWishListReducer = (state = { wishlist: [] }, action) => {
 	switch (action.type) {
 		case 'REQ_ADD_WISHLIST_ITEM':
@@ -104,6 +128,17 @@ export const addToWishListReducer = (state = { wishlist: [] }, action) => {
 		case 'FAIL_ADD_WISHLIST_ITEM':
 			return { loading: false, error: action.payload };
 
+		default:
+			return state;
+	}
+};
+
+export const userReducer = (state = null, action) => {
+	switch (action.type) {
+		case 'LOGGED_IN_USER':
+			return action.payload;
+		case 'LOGOUT':
+			return action.payload;
 		default:
 			return state;
 	}

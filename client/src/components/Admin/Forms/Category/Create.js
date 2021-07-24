@@ -10,13 +10,11 @@ import {
 	Upload,
 	Alert,
 } from 'antd';
-import { AiOutlinePlus } from 'react-icons/ai';
 import { createCatAction } from '../../../../actions/catActions';
 import { useDispatch, useSelector } from 'react-redux';
 import ImgCrop from 'antd-img-crop';
 import { AiOutlineInbox } from 'react-icons/ai';
 import './Create.css';
-import AdminMenu from '../../Menu/AdminMenu';
 const { Dragger } = Upload;
 
 const Create = ({ onCatClose, visible }) => {
@@ -26,7 +24,7 @@ const Create = ({ onCatClose, visible }) => {
 	let url = `${process.env.REACT_APP_API}/uploadimages`;
 	const { createCat } = useSelector((state) => ({ ...state }));
 	const { cat } = createCat;
-	const { err, loading } = cat;
+	const { err } = cat;
 
 	const props = {
 		name: 'file',
@@ -34,20 +32,17 @@ const Create = ({ onCatClose, visible }) => {
 		action: url,
 		onChange(info) {
 			const { status } = info.file;
-			if (status !== 'uploading') {
-				console.log('Image Info --->', info.file.name);
-			}
+
 			if (status === 'done') {
 				message.success(
 					`${info.file.name} file uploaded successfully.`
 				);
-				setImage(info.file.name);
+				setImage(`/uploads/${info.file.name}`);
 			} else if (status === 'error') {
 				message.error(`${info.file.name} file upload failed.`);
 			}
 		},
 		onDrop(e) {
-			console.log('Dropped files', e.dataTransfer.files);
 			e.preventDefault();
 		},
 	};
@@ -56,7 +51,6 @@ const Create = ({ onCatClose, visible }) => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		if (err) {
-			console.log('ERROR ====>', err);
 			message.error(err);
 		}
 		dispatch(createCatAction(name, image));

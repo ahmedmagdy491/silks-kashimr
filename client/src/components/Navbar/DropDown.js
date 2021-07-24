@@ -1,20 +1,32 @@
 import React, { Fragment } from 'react';
-import { Menu, Dropdown, Button, Space } from 'antd';
+import { Menu, Dropdown, Button } from 'antd';
 import { Link } from 'react-router-dom';
 import './assets/navbar.css';
+import { useDispatch } from 'react-redux';
+import { logout } from './../../actions/userActions';
 
 const DropDown = () => {
-	let links = ['checkout', 'cart', 'profile', 'logout'];
+	let dispatch = useDispatch();
+
+	const logoutUser = () => {
+		dispatch(logout());
+	};
 	const menu = (
 		<Fragment>
-			{links &&
-				links.map((link) => (
-					<Menu>
-						<Menu.Item>
-							<Link to={`/${link}`}>{link}</Link>
-						</Menu.Item>
-					</Menu>
-				))}
+			<Menu>
+				<Menu.Item>
+					<Link to="/shipping">Checkout</Link>
+				</Menu.Item>
+				<Menu.Item>
+					<Link to="/cart">Cart</Link>
+				</Menu.Item>
+				<Menu.Item>
+					<Link to="/profile">Profile</Link>
+				</Menu.Item>
+				<Menu.Item>
+					<Link onClick={logoutUser}>Logout</Link>
+				</Menu.Item>
+			</Menu>
 		</Fragment>
 	);
 	return (

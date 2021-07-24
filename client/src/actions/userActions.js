@@ -44,8 +44,6 @@ export const signup = (name, email, password) => async (dispatch) => {
 			type: 'USER_SIGNUP_REQUIST',
 		});
 
-		console.log({ name, email, password });
-
 		const config = {
 			headers: {
 				'Content-Type': 'application/json',
@@ -83,12 +81,15 @@ export const signup = (name, email, password) => async (dispatch) => {
 
 export const logout = () => async (dispatch) => {
 	localStorage.removeItem('userInfo');
-	// localStorage.removeItem('cartItems');
-	// localStorage.removeItem('shippingAddress');
-	// localStorage.removeItem('paymentMethod');
+	localStorage.removeItem('cartItems');
+	localStorage.removeItem('shippingAddress');
+	localStorage.removeItem('paymentMethod');
 
 	dispatch({ type: 'USER_LOGOUT' });
+	dispatch({ type: 'CART_RESET_ITEM' });
 	dispatch({ type: 'USER_DETAILS_RESET' });
+	dispatch({ type: 'ORDER_LIST_MY_RESET' });
+	dispatch({ type: 'ORDER_DETAILS_RESET' });
 	dispatch({ type: 'USER_LIST_RESET' });
 };
 
@@ -278,45 +279,113 @@ export const deleteUser = (id) => async (dispatch, getState) => {
 	}
 };
 
-export const addToWishListAction =
-	(productId) => async (dispatch, getState) => {
-		try {
-			dispatch({
-				type: 'REQ_ADD_WISHLIST_ITEM',
-			});
+export const addToWishListAction = (product) => async (dispatch, getState) => {
+	try {
+		dispatch({
+			type: 'REQ_ADD_WISHLIST_ITEM',
+		});
 
-			const {
-				userLogin: { userInfo },
-			} = getState();
-			const config = {
-				headers: {
-					'Content-Type': 'application/json',
-					Authorization: `Bearer ${userInfo.token}`,
-				},
-			};
-			const { data } = await axios.post(
-				`${url}/user/wishlist`,
-				{ productId },
-				config
-			);
-			dispatch({
-				type: 'ADD_WISHLIST_ITEM',
-				payload: data,
-			});
-		} catch (error) {
-			dispatch({
-				type: 'FAIL_ADD_WISHLIST_ITEM',
-				payload:
-					error.response && error.response.data.message
-						? error.response.data.message
-						: error.message,
-			});
-		}
-	};
+		const {
+			userLogin: { userInfo },
+		} = getState();
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${userInfo.token}`,
+			},
+		};
+		const { data } = await axios.post(
+			`${url}/wishlist`,
+			{ product },
+			config
+		);
+		console.log(data);
+		dispatch({
+			type: 'ADD_WISHLIST_ITEM',
+			payload: data,
+		});
+	} catch (error) {
+		dispatch({
+			type: 'FAIL_ADD_WISHLIST_ITEM',
+			payload:
+				error.response && error.response.data
+					? error.response.data
+					: error.data,
+		});
+	}
+};
 
-export const removeFromWishList = (slug) => async (dispatch) => {
-	dispatch({
-		type: 'REMOVE_WISHLIST_ITEM',
-		payload: slug,
-	});
+export const createOrUpdateUserAction = (authtoken) => async (dispatch) => {
+	try {
+		dispatch({
+			type: 'USER_CREATE_OR_UPDATE_REQUEST',
+		});
+
+		const config = {
+			headers: {
+				authtoken,
+			},
+		};
+
+		const { data } = await axios.post(
+			`${url}/create-or-update-user`,
+			{},
+			config
+		);
+
+		dispatch({
+			type: 'USER_CREATE_OR_UPDATE_SUCCESS',
+			payload: {
+				name: data.name,
+				email: data.email,
+				token: authtoken,
+				role: data.role,
+				_id: data._id,
+			},
+		});
+
+		localStorage.setItem('userInfo', JSON.stringify(data));
+	} catch (error) {
+		console.log(error.response);
+		dispatch({
+			type: 'USER_CREATE_OR_UPDATE_FAIL',
+			payload:
+				error.response && error.response.data.message
+					? error.response.data.message
+					: error.message,
+		});
+	}
+};
+
+export const currentUser = (authtoken) => async (dispatch) => {
+	try {
+		const config = {
+			headers: {
+				authtoken,
+			},
+		};
+
+		const { data } = await axios.post(`${url}/current-user`, {}, config);
+		dispatch({
+			type: 'CURRENT_USER_SUCCESS',
+			payload: {
+				name: data.name,
+				email: data.email,
+				token: authtoken,
+				role: data.role,
+				_id: data._id,
+			},
+		});
+
+		localStorage.setItem('userInfo', JSON.stringify(data));
+	} catch (error) {
+		console.log(error.response);
+		dispatch({
+			type: 'CURRENT_USER_FAIL',
+			payload:
+				error.response && error.response.data.message
+					? error.response.data.message
+					: error.message,
+		});
+	}
 };

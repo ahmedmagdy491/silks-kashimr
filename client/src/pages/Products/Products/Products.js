@@ -6,10 +6,11 @@ import Skeleton from './../../../components/Loader/Skeleton';
 import Product from './Product';
 import { Row } from 'react-bootstrap';
 
-const Products = ({ match }) => {
+const Products = ({ match, showDrawer }) => {
 	const dispatch = useDispatch();
+
 	const { catProductList } = useSelector((state) => ({ ...state }));
-	const { loading, error, products } = catProductList;
+	const { loading, products } = catProductList;
 	let catSlug = match.params.slug;
 
 	useEffect(() => {
@@ -17,20 +18,22 @@ const Products = ({ match }) => {
 	}, [dispatch, match, catSlug]);
 
 	return (
-		<Row>
-			{loading ? (
-				<Skeleton />
-			) : (
-				products &&
-				products.map((product) => (
-					<Product
-						key={product._id}
-						product={product}
-						catSlug={catSlug}
-					/>
-				))
-			)}
-		</Row>
+		<>
+			<Row>
+				{loading ? (
+					<Skeleton />
+				) : (
+					products &&
+					products.map((product) => (
+						<Product
+							key={product._id}
+							product={product}
+							showDrawer={showDrawer}
+						/>
+					))
+				)}
+			</Row>
+		</>
 	);
 };
 

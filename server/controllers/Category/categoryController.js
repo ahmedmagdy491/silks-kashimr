@@ -4,7 +4,7 @@ const slugify = require('slugify');
 
 const createCategory = Async(async (req, res) => {
 	const { name } = req.body;
-	const image = '/public/uploads/' + req.body.image;
+	const image = req.body.image;
 
 	if (await Category.findOne({ name }))
 		res.json({ err: 'The category already exists' });

@@ -10,8 +10,6 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const { notFound, errorHandler } = require('./middlewares/errorMiddleware');
 
-app.use(express.static(path.join(__dirname, '/public')));
-
 app.use(express.json());
 
 connectDB();
@@ -19,10 +17,11 @@ connectDB();
 readdirSync('./routes').map((route) =>
 	app.use('/api', require('./routes/' + route))
 );
-
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
+app.use(express.static(path.join(__dirname, '/public')));
 // send front app
 app.get('*', (req, res) => {
-	res.sendFile(path.join(__dirname, 'public', 'index.html'));
+	res.sendFile(path.join(__dirname, '/public', 'index.html'));
 });
 
 const port = process.env.PORT || 4000;

@@ -12,18 +12,18 @@ const userSchema = mongoose.Schema(
 			required: true,
 			unique: true,
 		},
-		password: {
+
+		role: {
 			type: String,
-			required: true,
-		},
-		isAdmin: {
-			type: Boolean,
-			required: true,
-			default: false,
+			default: 'subscriber',
 		},
 		address: String,
 		wishlist: {
 			type: Array,
+		},
+		cart: {
+			type: Array,
+			default: [],
 		},
 	},
 	{

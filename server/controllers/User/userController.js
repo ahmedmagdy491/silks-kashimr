@@ -164,19 +164,57 @@ const deleteUser = asyncHandler(async (req, res) => {
 });
 
 const addToWishList = asyncHandler(async (req, res) => {
-	const { productId } = req.body;
-
+	const { product } = req.body;
 	let user = await User.findOne({ _id: req.user.id });
-	const wish = user.wishlist;
-	const existWish = wish.find((id) => id === productId);
-	if (existWish) {
-		res.status(400);
-		throw new Error('This item already exists in your wish list');
+	if (user == null) {
+		res.status(401).json('you should login to review');
 	}
-	const newWish = wish.push(productId);
-	res.json(`you added a new item to your wishlist`);
+	let { wishlist } = user;
+	const existWish = wishlist.find((slug) => slug === product);
+	if (existWish) {
+		user.wishlist = user.wishlist.filter((slug) => slug !== existWish);
+		await user.save();
+		res.send('removed');
+	}
+	wishlist = wishlist.push(product);
 	await user.save();
+	res.send('added');
 });
+
+const getWishes = asyncHandler(async (req, res) => {
+	const user = await User.findById(req.user.id);
+	res.json(user.wishlist);
+});
+
+const createOrUpdateUser = async (req, res) => {
+	const { name, picture, email } = req.user;
+
+	const user = await User.findOneAndUpdate(
+		{ email },
+		{ name: email.split('@')[0], picture },
+		{ new: true }
+	);
+
+	if (user) {
+		res.json(user);
+		console.log('User Update', user);
+	} else {
+		const newUser = await new User({
+			email,
+			name: email.split('@')[0],
+			picture,
+		}).save();
+		res.json(newUser);
+		console.log('user created', newUser);
+	}
+};
+
+const currentUser = async (req, res) => {
+	await User.findOne({ email: req.user.email }).exec((err, user) => {
+		if (err) throw new Error(err);
+		res.json(user);
+	});
+};
 
 module.exports = {
 	loginUser,
@@ -188,4 +226,7 @@ module.exports = {
 	updateUser,
 	deleteUser,
 	addToWishList,
+	getWishes,
+	currentUser,
+	createOrUpdateUser,
 };

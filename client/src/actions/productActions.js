@@ -15,11 +15,6 @@ import {
 import axios from 'axios';
 
 let url = process.env.REACT_APP_API;
-const config = {
-	headers: {
-		'Content-Type': 'application/json',
-	},
-};
 
 export const productListAction = () => async (dispatch) => {
 	try {
@@ -42,10 +37,18 @@ export const productListAction = () => async (dispatch) => {
 	}
 };
 
-export const productCreateAction = (product) => async (dispatch) => {
+export const productCreateAction = (product) => async (dispatch, getState) => {
 	try {
 		dispatch({ type: PRODUCT_CREATE_REQUEST });
-
+		const {
+			userLogin: { userInfo },
+		} = getState();
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${userInfo.token}`,
+			},
+		};
 		const { data } = await axios.post(`${url}/product`, product, config);
 		console.log('data from product create action', data);
 		dispatch({
@@ -62,6 +65,43 @@ export const productCreateAction = (product) => async (dispatch) => {
 		});
 	}
 };
+
+export const productUpdateAction =
+	(slug, product) => async (dispatch, getState) => {
+		try {
+			// dispatch({ type: ' PRODUCT_UPDATE_REQUEST' });
+
+			// const {
+			// 	userLogin: { userInfo },
+			// } = getState();
+			// const config = {
+			// 	headers: {
+			// 		'Content-Type': 'application/json',
+			// 		Authorization: `Bearer ${userInfo.token}`,
+			// 	},
+			// };
+
+			const { data } = await axios.put(
+				`${url}/product/${slug}`,
+				product
+				// config
+			);
+			console.log('data from product update action', data);
+			dispatch({
+				type: 'PRODUCT_UPDATE_SUCCESS',
+				payload: data,
+			});
+		} catch (error) {
+			console.log(error);
+			dispatch({
+				type: 'PRODUCT_UPDATE_FAIL',
+				payload:
+					error.response && error.response.message
+						? error.response.message
+						: error.message,
+			});
+		}
+	};
 
 export const productDetailsAction = (slug) => async (dispatch) => {
 	try {

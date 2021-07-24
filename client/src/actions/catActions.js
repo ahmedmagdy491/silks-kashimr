@@ -33,15 +33,27 @@ export const listCats = () => async (dispatch) => {
 	}
 };
 
-export const createCatAction = (name, image) => async (dispatch) => {
+export const createCatAction = (name, image) => async (dispatch, getState) => {
 	try {
 		dispatch({ type: CREATE_CAT_REQUEST });
+		const {
+			userLogin: { userInfo },
+		} = getState();
+		const config = {
+			headers: {
+				'Content-Type': 'application/json',
+				Authorization: `Bearer ${userInfo.token}`,
+			},
+		};
+		const { data } = await axios.post(
+			`${url}/category`,
+			{
+				name,
+				image,
+			},
+			config
+		);
 
-		const { data } = await axios.post(`${url}/category`, {
-			name,
-			image,
-		});
-		console.log('res from create cat action --->', data);
 		dispatch({
 			type: CREATE_CAT_SUCCESS,
 			payload: data,
@@ -62,7 +74,6 @@ export const listCatProduct = (slug) => async (dispatch) => {
 		dispatch({ type: CAT_PRODUCT_LIST_REQUEST });
 
 		const { data } = await axios.get(`${url}/cat/${slug}`);
-		console.log(data);
 		dispatch({
 			type: CAT_PRODUCT_LIST_SUCCESS,
 			payload: data,
