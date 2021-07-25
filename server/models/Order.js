@@ -12,9 +12,10 @@ const orderSchema = mongoose.Schema(
 				name: { type: String, required: true },
 				qty: { type: Number, required: true },
 				image: { type: String, required: true },
-				price: { type: String, required: true },
+				originalPrice: { type: String, required: true },
+				discountPrice: { type: String, required: true },
 				product: {
-					type: mongoose.Schema.Types.ObjectId,
+					type: mongoose.Schema.Types.String,
 					required: true,
 					ref: 'Product',
 				},
@@ -66,6 +67,9 @@ const orderSchema = mongoose.Schema(
 		},
 		deliveredAt: {
 			type: Date,
+		},
+		note: {
+			type: String,
 		},
 	},
 	{

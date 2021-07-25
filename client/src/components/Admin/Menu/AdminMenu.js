@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Menu, Button } from 'antd';
+import { Menu, Switch, Divider, Button } from 'antd';
 import {
 	AiOutlineRight,
 	AiOutlineFileAdd,
@@ -7,68 +7,87 @@ import {
 	AiOutlineMenuUnfold,
 	AiOutlineMenuFold,
 } from 'react-icons/ai';
+import {
+	MailOutlined,
+	CalendarOutlined,
+	AppstoreOutlined,
+	SettingOutlined,
+	LinkOutlined,
+} from '@ant-design/icons';
 import './AdminMenu.css';
 
 const { SubMenu } = Menu;
-const AdminMenu = ({ showProductDrawer, showCatDrawer }) => {
+
+const AdminMenu = ({
+	showProductDrawer,
+	showCatDrawer,
+	showPannerDrawer,
+	showCatsDrawer,
+}) => {
+	const [mode, setMode] = React.useState('inline');
+	const [theme, setTheme] = React.useState('light');
+
+	const changeMode = (value) => {
+		setMode(value ? 'vertical' : 'inline');
+	};
+
+	const changeTheme = (value) => {
+		setTheme(value ? 'dark' : 'light');
+	};
 	const [collapsed, setCollapsed] = useState(true);
 	const toggleCollapsed = () => {
 		setCollapsed(!collapsed);
 	};
 
 	return (
-		<div style={{ width: 256 }} id="menu">
+		<div id="menu" style={{ width: 256 }}>
 			<Button
-				id="collapse"
+				type="primary"
 				onClick={toggleCollapsed}
 				style={{ marginBottom: 16 }}
 			>
-				{React.createElement(
-					collapsed ? AiOutlineMenuUnfold : AiOutlineMenuFold
-				)}
+				Collapsed
 			</Button>
-			<Menu
-				// defaultSelectedKeys={['1']}
-				// defaultOpenKeys={['sub1']}
-				mode="inline"
-				theme="dark"
-				inlineCollapsed={collapsed}
-				id="options"
-			>
+
+			<Menu mode={mode} theme={theme} inlineCollapsed={collapsed}>
+				<Menu.Item key="9">
+					<Switch onChange={changeMode} /> Mode
+					<Divider type="vertical" />
+					<Switch onChange={changeTheme} /> Style
+				</Menu.Item>
+
 				<SubMenu
 					key="sub1"
-					className="sub"
-					icon={<AiOutlineRight />}
+					icon={<AppstoreOutlined />}
 					title="Category"
 				>
-					<Menu.Item
-						key="5"
-						onClick={showCatDrawer}
-						icon={<AiOutlineFileAdd />}
-					>
-						Create Category
+					<Menu.Item key="3" onClick={showCatDrawer}>
+						Add New Category
 					</Menu.Item>
-					<Menu.Item key="6" icon={<AiOutlineEdit />}>
-						Edit Category
+					<Menu.Item key="4" onClick={showCatsDrawer}>
+						Get All Categories
 					</Menu.Item>
 				</SubMenu>
-				<SubMenu
-					key="sub2"
-					icon={<AiOutlineRight />}
-					title="Product"
-					id="options"
+				<SubMenu key="sub2" icon={<AppstoreOutlined />} title="Product">
+					<Menu.Item key="5" onClick={showProductDrawer}>
+						Add New Product
+					</Menu.Item>
+					<Menu.Item key="6">Get All Products</Menu.Item>
+				</SubMenu>
+				<SubMenu key="sub3" icon={<AppstoreOutlined />} title="User">
+					<Menu.Item key="7">Add New User</Menu.Item>
+					<Menu.Item key="8">Get All Users</Menu.Item>
+				</SubMenu>
+				<Menu.Item key="orders" icon={<LinkOutlined />}>
+					Orders
+				</Menu.Item>
+				<Menu.Item
+					key="panner"
+					icon={<LinkOutlined />}
+					onClick={showPannerDrawer}
 				>
-					<Menu.Item
-						key="9"
-						onClick={showProductDrawer}
-						icon={<AiOutlineFileAdd />}
-					>
-						Create Product
-					</Menu.Item>
-					<Menu.Item key="10" icon={<AiOutlineEdit />}>
-						Edit Product
-					</Menu.Item>
-				</SubMenu>
+					Panner
+				</Menu.Item>
 			</Menu>
 		</div>
 	);

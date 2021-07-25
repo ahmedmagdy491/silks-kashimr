@@ -1,6 +1,16 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
+import './placeOrder.css';
 import { Link } from 'react-router-dom';
-import { Col, ListGroup, Row, Image, Card, Button } from 'react-bootstrap';
+import {
+	Col,
+	ListGroup,
+	Row,
+	Image,
+	Card,
+	Button,
+	InputGroup,
+	FormControl,
+} from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import CheckoutSteps from '../../components/Checkout/CheckoutSteps';
 import Message from '../../components/Message';
@@ -9,11 +19,7 @@ import { createOrder } from './../../actions/orderAction';
 const PlaceOrderScreen = ({ history }) => {
 	const cart = useSelector((state) => state.cart);
 
-	if (!cart.shippingAddress.address) {
-		history.push('/shipping');
-	} else if (!cart.paymentMethod) {
-		history.push('/payment');
-	}
+	const userLogin = useSelector((state) => state.userLogin);
 
 	// Calculate Prices
 	const addDecimals = (num) => {
@@ -21,8 +27,15 @@ const PlaceOrderScreen = ({ history }) => {
 	};
 
 	cart.itemsPrice = addDecimals(
-		cart.cartItems.reduce((acc, item) => acc + item.price * item.qty, 0)
+		cart.cartItems.reduce(
+			(acc, item) =>
+				acc + item.discountPrice
+					? item.discountPrice
+					: item.originalPrice * item.qty,
+			0
+		)
 	);
+
 	cart.shippingPrice = addDecimals(cart.itemsPrice > 100 ? 0 : 100);
 	cart.taxPrice = addDecimals(Number((0.15 * cart.itemsPrice).toFixed(2)));
 	cart.totalPrice = (
@@ -37,16 +50,19 @@ const PlaceOrderScreen = ({ history }) => {
 	useEffect(() => {
 		if (success) {
 			history.push(`/order/${order._id}`);
-			//   dispatch({ type: USER_DETAILS_RESET })
-			//   dispatch({ type: ORDER_CREATE_RESET })
 		}
-	}, [history, success, order]);
+		if (!cart.shippingAddress.address) {
+			history.push('/shipping');
+		} else if (!cart.paymentMethod) {
+			history.push('/payment');
+		}
+	}, [history, success, order, cart]);
 
 	const dispatch = useDispatch();
 
 	const placeOrderHandler = () => {
 		dispatch(
-			createOrder({
+			createOrder(userLogin.token, {
 				orderItems: cart.cartItems,
 				shippingAddress: cart.shippingAddress,
 				paymentMethod: cart.paymentMethod,
@@ -69,6 +85,7 @@ const PlaceOrderScreen = ({ history }) => {
 							<p>
 								<strong>Address:</strong>
 								<br />
+
 								{cart.shippingAddress.address}
 								<br />
 								{cart.shippingAddress.city}
@@ -111,10 +128,16 @@ const PlaceOrderScreen = ({ history }) => {
 													</Link>
 												</Col>
 												<Col md={4}>
-													{item.qty} x ${item.price} =
-													$
+													{item.qty} x $
+													{item.discountPrice
+														? item.discountPrice
+														: item.originalPrice}{' '}
+													= $
 													{(
-														item.qty * item.price
+														item.qty *
+														(item.discountPrice
+															? item.discountPrice
+															: item.originalPrice)
 													).toFixed(2)}
 												</Col>
 											</Row>

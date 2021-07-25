@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './orderScreen.css';
 import { PayPalButton } from 'react-paypal-button-v2';
 import { Link } from 'react-router-dom';
 import { Row, Col, ListGroup, Image, Card, Button } from 'react-bootstrap';
@@ -9,11 +10,15 @@ import {
 	deliverOrder,
 	getOrderDetails,
 	payOrder,
+	addNote,
 } from '../../actions/orderAction.js';
 import { Fragment } from 'react';
 
 const OrderScreen = ({ match, history }) => {
 	const orderId = match.params.id;
+
+	const [note, setNote] = useState('');
+	const [skip, setSkip] = useState(false);
 
 	const dispatch = useDispatch();
 
@@ -27,7 +32,6 @@ const OrderScreen = ({ match, history }) => {
 	const { loading: loadingDeliver, success: successDeliver } = orderDeliver;
 
 	const userLogin = useSelector((state) => state.userLogin);
-	const { userInfo } = userLogin;
 
 	if (!loading) {
 		//   Calculate prices
@@ -35,16 +39,21 @@ const OrderScreen = ({ match, history }) => {
 			return (Math.round(num * 100) / 100).toFixed(2);
 		};
 
-		order.itemsPrice = addDecimals(
-			order.orderItems.reduce(
-				(acc, item) => acc + item.price * item.qty,
-				0
-			)
-		);
+		if (order) {
+			order.itemsPrice = addDecimals(
+				order.orderItems.reduce(
+					(acc, item) =>
+						acc + item.discountPrice
+							? item.discountPrice
+							: item.originalPrice * item.qty,
+					0
+				)
+			);
+		}
 	}
 
 	useEffect(() => {
-		if (!userInfo) {
+		if (!userLogin) {
 			history.push('/login');
 		}
 
@@ -59,14 +68,20 @@ const OrderScreen = ({ match, history }) => {
 		successPay,
 		order,
 		history,
-		userInfo,
+		userLogin,
 		successDeliver,
 	]);
 
-	const successPaymentHandler = async (paymentResult) => {
+	const successPaymentHandler = async (paymentResult, data) => {
 		try {
 			console.log('payment' + paymentResult);
 			dispatch(payOrder(orderId, paymentResult));
+			return fetch('/paypal-transaction-complete', {
+				method: 'post',
+				body: JSON.stringify({
+					orderID: data.orderID,
+				}),
+			});
 		} catch (error) {
 			console.log('error' + error);
 		}
@@ -74,6 +89,12 @@ const OrderScreen = ({ match, history }) => {
 
 	const deliverHandler = () => {
 		dispatch(deliverOrder(order));
+	};
+
+	const submitNoteHandler = (e) => {
+		e.preventDefault();
+		dispatch(addNote(orderId, note));
+		console.log(note);
 	};
 
 	return loading ? (
@@ -155,10 +176,16 @@ const OrderScreen = ({ match, history }) => {
 													</Link>
 												</Col>
 												<Col md={4}>
-													{item.qty} x ${item.price} =
-													$
+													{item.qty} x $ (
+													{item.discountPrice
+														? item.discountPrice
+														: item.originalPrice}
+													) = $
 													{(
-														item.qty * item.price
+														item.qty *
+														(item.discountPrice
+															? item.discountPrice
+															: item.originalPrice)
 													).toFixed(2)}
 												</Col>
 											</Row>
@@ -199,6 +226,37 @@ const OrderScreen = ({ match, history }) => {
 									<Col>${order.totalPrice}</Col>
 								</Row>
 							</ListGroup.Item>
+							<ListGroup.Item>
+								{
+									<div className="note">
+										<label htmlFor="message">
+											Do you have any notes
+										</label>
+										<textarea
+											name="message"
+											id="message"
+											rows="4"
+											cols="50"
+											value={note}
+											onChange={(e) =>
+												setNote(e.target.value)
+											}
+										></textarea>
+										<button
+											type="submit"
+											onClick={submitNoteHandler}
+										>
+											Submit
+										</button>
+										<button
+											type="submit"
+											onClick={() => setSkip(true)}
+										>
+											Skip
+										</button>
+									</div>
+								}
+							</ListGroup.Item>
 							{!order.isPaid && (
 								<ListGroup.Item>
 									{loadingPay && <Loader />}
@@ -206,13 +264,19 @@ const OrderScreen = ({ match, history }) => {
 										<PayPalButton
 											amount={order.totalPrice}
 											onSuccess={successPaymentHandler}
+											options={{
+												clientId:
+													'AadkgopSfK3_OtaYe4jNcPK-A8uV3RrJelTKG7DMwFJlNeuR3pOBHyMJKjrx8ELwIGLNfir_EGD8UeYk',
+												secret: 'EC3cP_qqosipFrKb-emG4_KniWit_3aGc4_iC7z6FAINmGiGuqN6eWk8NsdXW_4lPL3uc8ANZ0DVfvqp',
+											}}
+											disable-funding
 										/>
 									}
 								</ListGroup.Item>
 							)}
 							{loadingDeliver && <Loader />}
-							{userInfo &&
-								userInfo.isAdmin &&
+							{userLogin &&
+								userLogin.role === 'admin' &&
 								order.isPaid &&
 								!order.isDelivered && (
 									<ListGroup.Item>

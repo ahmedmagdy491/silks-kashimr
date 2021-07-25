@@ -14,8 +14,11 @@ const Header = () => {
 			type: 'LOGOUT',
 			payload: null,
 		});
-
-		history.push('/login');
+		localStorage.removeItem('userInfo');
+		localStorage.removeItem('cartItems');
+		localStorage.removeItem('paymentMethod');
+		localStorage.removeItem('shippingAddress');
+		history.push('/signin');
 	};
 	const history = useHistory();
 

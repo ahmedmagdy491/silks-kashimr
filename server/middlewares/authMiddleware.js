@@ -42,8 +42,8 @@ const protect = async (req, res, next) => {
 		const firebaseUser = await adminFb
 			.auth()
 			.verifyIdToken(req.headers.authtoken);
-		// console.log('Firebase user in authCheck', firebaseUser);
 		req.user = firebaseUser;
+		console.log(req.user);
 		next();
 	} catch (error) {
 		res.status(401).json({

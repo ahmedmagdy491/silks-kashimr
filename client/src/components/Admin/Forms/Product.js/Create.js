@@ -46,7 +46,7 @@ const CreateProduct = ({ onProductClose, visible }) => {
 	const [name, setName] = useState();
 	const [images, setImages] = useState();
 	const [description, setDescription] = useState();
-	const [price, setPrice] = useState();
+	const [originalPrice, setOriginalPrice] = useState();
 	const [category, setCategory] = useState();
 	const [qty, setQty] = useState();
 	const [color, setColor] = useState();
@@ -72,7 +72,7 @@ const CreateProduct = ({ onProductClose, visible }) => {
 			productCreateAction({
 				name,
 				description,
-				price,
+				originalPrice,
 				category,
 				quantity: qty,
 				color,
@@ -152,8 +152,8 @@ const CreateProduct = ({ onProductClose, visible }) => {
 					<Form.Item>
 						<InputNumber
 							placeholder="price"
-							defaultValue={price}
-							onChange={(e) => setPrice(e)}
+							defaultValue={originalPrice}
+							onChange={(e) => setOriginalPrice(e)}
 						/>
 					</Form.Item>
 					<Form.Item>

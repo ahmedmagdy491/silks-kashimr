@@ -80,7 +80,7 @@ export const signup = (name, email, password) => async (dispatch) => {
 };
 
 export const logout = () => async (dispatch) => {
-	localStorage.removeItem('userInfo');
+	localStorage.removeItem('userLogin');
 	localStorage.removeItem('cartItems');
 	localStorage.removeItem('shippingAddress');
 	localStorage.removeItem('paymentMethod');
@@ -208,19 +208,15 @@ export const updateUser = (user) => async (dispatch, getState) => {
 	}
 };
 
-export const listUsers = () => async (dispatch, getState) => {
+export const listUsers = (authtoken) => async (dispatch) => {
 	try {
 		dispatch({
 			type: 'USER_LIST_REQUEST',
 		});
 
-		const {
-			userLogin: { userInfo },
-		} = getState();
-
 		const config = {
 			headers: {
-				Authorization: `Bearer ${userInfo.token}`,
+				authtoken,
 			},
 		};
 

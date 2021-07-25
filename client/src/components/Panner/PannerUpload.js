@@ -6,16 +6,10 @@ import axios from 'axios';
 import { useSelector } from 'react-redux';
 const { Dragger } = Upload;
 
-const PannerUpload = () => {
+const PannerUpload = ({ onClose, visible }) => {
 	const [images, setImages] = useState([]);
-	const [visible, setVisible] = useState(false);
 	const [files, setFiles] = useState([]);
-	const showDrawer = () => {
-		setVisible(true);
-	};
-	const onClose = () => {
-		setVisible(false);
-	};
+
 	let url = `${process.env.REACT_APP_API}`;
 
 	const uploadFileHandler = async (e) => {
@@ -62,9 +56,6 @@ const PannerUpload = () => {
 	};
 	return (
 		<>
-			<Button type="primary" onClick={showDrawer}>
-				Open
-			</Button>
 			<Drawer
 				title="Basic Drawer"
 				placement="right"

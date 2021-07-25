@@ -10,7 +10,7 @@ const {
 	getUsers,
 	addToWishList,
 	getWishes,
-	createOrUpdateUser,
+	createOrLoginUser,
 	currentUser,
 } = require('../controllers/User/userController.js');
 
@@ -31,7 +31,7 @@ router
 router.route('/wishlist').post(protect, addToWishList);
 router.route('/wishes').get(protect, getWishes);
 
-router.post('/create-or-update-user', protect, createOrUpdateUser);
+router.post('/create-or-login-user', protect, createOrLoginUser);
 router.post('/current-user', protect, currentUser);
 router.post('/current-admin', protect, admin, currentUser);
 

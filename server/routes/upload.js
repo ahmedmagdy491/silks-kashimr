@@ -12,4 +12,10 @@ router.post('/uploadimages', uploadImgs.array('file'), (req, res, next) => {
 
 	res.send(paths);
 });
+
+router.post('/uploadimage', uploadImgs.single('file'), (req, res, next) => {
+	let { path } = req.file;
+
+	res.send(path);
+});
 module.exports = router;

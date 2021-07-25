@@ -27,6 +27,7 @@ import RegisterComplete from './pages/SignUpScreen/RegisterComplete';
 import { currentUser } from './actions/userActions';
 import ForgetPassword from './pages/Forget Password/ForgetPassword';
 import PannerUpload from './components/Panner/PannerUpload';
+import CategoriesDrawer from './pages/Categories/CategoriesDrawer.js';
 const App = () => {
 	const dispatch = useDispatch();
 	// to check firebase auth state
@@ -44,6 +45,8 @@ const App = () => {
 	const [productVisible, setProductVisible] = useState(false);
 	const [productUpdateVisible, setProductUpdateVisible] = useState(false);
 	const [catVisible, setCatVisible] = useState(false);
+	const [pannerVisible, setPannerVisible] = useState(false);
+	const [catsVisible, setCatsVisible] = useState(false);
 	const showProductDrawer = () => {
 		setProductVisible(true);
 	};
@@ -63,16 +66,33 @@ const App = () => {
 	const closeUpdateProductDrawer = () => {
 		setProductUpdateVisible(false);
 	};
+
+	const showPannerDrawer = () => {
+		setPannerVisible(true);
+	};
+	const closePannerDrawer = () => {
+		setPannerVisible(false);
+	};
+	const showCatsDrawer = () => {
+		setCatsVisible(true);
+	};
+	const closeCatsDrawer = () => {
+		setCatsVisible(false);
+	};
+
 	return (
 		<Fragment>
 			<Router>
 				<Header />
-				<PannerUpload />
+				<PannerUpload
+					onClose={closePannerDrawer}
+					visible={pannerVisible}
+				/>
 				<AdminMenu
 					showProductDrawer={showProductDrawer}
 					showCatDrawer={showCatDrawer}
-					onProductClose={onProductClose}
-					onCatClose={onCatClose}
+					showPannerDrawer={showPannerDrawer}
+					showCatsDrawer={showCatsDrawer}
 				/>
 				<Create onCatClose={onCatClose} visible={catVisible} />
 				<CreateProduct
@@ -83,6 +103,10 @@ const App = () => {
 					visible={productUpdateVisible}
 					closeDrawer={closeUpdateProductDrawer}
 				/>
+				<CategoriesDrawer
+					onClose={closeCatsDrawer}
+					visible={catsVisible}
+				/>
 				<Container className="mt-5">
 					<Route path="/" component={LandingPage} exact />
 					<Route path="/signup" component={SignUpScreen} />
@@ -91,7 +115,7 @@ const App = () => {
 						component={RegisterComplete}
 						exact
 					/>
-					<Route path="/login" component={LoginScreen} />
+					<Route path="/signin" component={LoginScreen} />
 					<Route path="/forgetpassword" component={ForgetPassword} />
 					<Route
 						path="./admin/user/:id/edit"

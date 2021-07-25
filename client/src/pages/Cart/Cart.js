@@ -20,7 +20,7 @@ const CartScreen = ({ match, location, history }) => {
 
 	const dispatch = useDispatch();
 
-	const { cart } = useSelector((state) => ({ ...state }));
+	const { cart, userLogin } = useSelector((state) => ({ ...state }));
 	const { cartItems } = cart;
 
 	useEffect(() => {
@@ -34,7 +34,8 @@ const CartScreen = ({ match, location, history }) => {
 	};
 
 	const checkoutHandler = () => {
-		history.push('/login?redirect=shipping');
+		if (!userLogin) history.push('/signin');
+		else history.push('/shipping');
 	};
 
 	return (
@@ -63,7 +64,12 @@ const CartScreen = ({ match, location, history }) => {
 											{item.name}
 										</Link>
 									</Col>
-									<Col md={2}>${item.price}</Col>
+									<Col md={2}>
+										$
+										{item.discountPrice
+											? item.discountPrice
+											: item.originalPrice}
+									</Col>
 									<Col md={2}>
 										<Form.Control
 											as="select"
@@ -125,7 +131,11 @@ const CartScreen = ({ match, location, history }) => {
 								{cartItems
 									.reduce(
 										(acc, item) =>
-											acc + item.qty * item.price,
+											acc +
+											item.qty *
+												(item.discountPrice
+													? item.discountPrice
+													: item.originalPrice),
 										0
 									)
 									.toFixed(2)}

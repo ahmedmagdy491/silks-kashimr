@@ -11,7 +11,7 @@ const LoginScreen = ({ history }) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 
-	let { userLogin, createOrUpdateUser } = useSelector((state) => ({
+	let { userLogin } = useSelector((state) => ({
 		...state,
 	}));
 	const [loading, setLoading] = useState(false);

@@ -186,23 +186,20 @@ const getWishes = asyncHandler(async (req, res) => {
 	res.json(user.wishlist);
 });
 
-const createOrUpdateUser = async (req, res) => {
-	const { name, picture, email } = req.user;
+const createOrLoginUser = async (req, res) => {
+	const { email } = req.user;
 
 	const user = await User.findOneAndUpdate(
 		{ email },
-		{ name: email.split('@')[0], picture },
+		{ name: email.split('@')[0] },
 		{ new: true }
 	);
-
 	if (user) {
 		res.json(user);
-		console.log('User Update', user);
 	} else {
 		const newUser = await new User({
 			email,
 			name: email.split('@')[0],
-			picture,
 		}).save();
 		res.json(newUser);
 		console.log('user created', newUser);
@@ -228,5 +225,5 @@ module.exports = {
 	addToWishList,
 	getWishes,
 	currentUser,
-	createOrUpdateUser,
+	createOrLoginUser,
 };

@@ -1,20 +1,16 @@
 import axios from 'axios';
 const url = process.env.REACT_APP_API;
 
-export const createOrder = (order) => async (dispatch, getState) => {
+export const createOrder = (authtoken, order) => async (dispatch, getState) => {
 	try {
 		dispatch({
 			type: 'ORDER_CREATE_REQUEST',
 		});
 
-		const {
-			userLogin: { userInfo },
-		} = getState();
-
 		const config = {
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${userInfo.token}`,
+				authtoken,
 			},
 		};
 
@@ -41,13 +37,12 @@ export const getOrderDetails = (id) => async (dispatch, getState) => {
 			type: 'ORDER_DETAILS_REQUEST',
 		});
 
-		const {
-			userLogin: { userInfo },
-		} = getState();
+		const { userLogin } = getState();
+		const authtoken = userLogin.token;
 
 		const config = {
 			headers: {
-				Authorization: `Bearer ${userInfo.token}`,
+				authtoken,
 			},
 		};
 
@@ -74,14 +69,13 @@ export const deliverOrder = (order) => async (dispatch, getState) => {
 			type: 'ORDER_DELIVER_REQUEST',
 		});
 
-		const {
-			userLogin: { userInfo },
-		} = getState();
+		const { userLogin } = getState();
+		const authtoken = userLogin.token;
 
 		const config = {
 			headers: {
 				'Content-Type': 'application/json',
-				Authorization: `Bearer ${userInfo.token}`,
+				authtoken,
 			},
 		};
 
@@ -113,14 +107,13 @@ export const payOrder =
 				type: 'ORDER_PAY_REQUEST',
 			});
 
-			const {
-				userLogin: { userInfo },
-			} = getState();
+			const { userLogin } = getState();
+			const authtoken = userLogin.token;
 
 			const config = {
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `Bearer ${userInfo.token}`,
+					authtoken,
 				},
 			};
 
@@ -151,13 +144,12 @@ export const listMyOrders = () => async (dispatch, getState) => {
 			type: 'ORDER_LIST_MY_REQUEST',
 		});
 
-		const {
-			userLogin: { userInfo },
-		} = getState();
+		const { userLogin } = getState();
+		const authtoken = userLogin.token;
 
 		const config = {
 			headers: {
-				Authorization: `Bearer ${userInfo.token}`,
+				authtoken,
 			},
 		};
 
@@ -184,13 +176,12 @@ export const listOrders = () => async (dispatch, getState) => {
 			type: 'ORDER_LIST_REQUEST',
 		});
 
-		const {
-			userLogin: { userInfo },
-		} = getState();
+		const { userLogin } = getState();
+		const authtoken = userLogin.token;
 
 		const config = {
 			headers: {
-				Authorization: `Bearer ${userInfo.token}`,
+				authtoken,
 			},
 		};
 
@@ -203,6 +194,42 @@ export const listOrders = () => async (dispatch, getState) => {
 	} catch (error) {
 		dispatch({
 			type: 'ORDER_LIST_FAIL',
+			payload:
+				error.response && error.response.data.message
+					? error.response.data.message
+					: error.message,
+		});
+	}
+};
+
+export const addNote = (orderId, note) => async (dispatch, getState) => {
+	try {
+		dispatch({
+			type: 'ORDER_NOTE_REQUEST',
+		});
+
+		const { userLogin } = getState();
+		const authtoken = userLogin.token;
+
+		const config = {
+			headers: {
+				authtoken,
+			},
+		};
+
+		const { data } = await axios.put(
+			`${url}/orders/${orderId}/note`,
+			note,
+			config
+		);
+
+		dispatch({
+			type: 'ORDER_NOTE_SUCCESS',
+			payload: data,
+		});
+	} catch (error) {
+		dispatch({
+			type: 'ORDER_NOTE_FAIL',
 			payload:
 				error.response && error.response.data.message
 					? error.response.data.message

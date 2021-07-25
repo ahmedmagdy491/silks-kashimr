@@ -22,7 +22,9 @@ const Details = ({ productInfo }) => {
 			<Row className="justify-content-between h1">
 				<div>{productInfo.name}</div>
 				<div>
-					{productInfo.price}
+					{productInfo.discountPrice
+						? productInfo.discountPrice
+						: productInfo.originalPrice}
 					<BiEuro className="mb-1" />
 				</div>
 			</Row>

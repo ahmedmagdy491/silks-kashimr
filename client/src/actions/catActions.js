@@ -88,3 +88,11 @@ export const listCatProduct = (slug) => async (dispatch) => {
 		});
 	}
 };
+
+export const removeCat = (slug, authtoken) => async (dispatch) => {
+	try {
+		await axios.get(`${url}/cat/${slug}`);
+	} catch (error) {
+		console.log(error);
+	}
+};

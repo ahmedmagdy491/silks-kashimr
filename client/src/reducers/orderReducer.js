@@ -88,3 +88,16 @@ export const orderListReducer = (state = { orders: [] }, action) => {
 			return state;
 	}
 };
+
+export const addNoteReducer = (state = { note: '' }, action) => {
+	switch (action.type) {
+		case 'ORDER_NOTE_REQUEST':
+			return { loading: true };
+		case 'ORDER_NOTE_SUCCESS':
+			return { loading: false, note: action.payload };
+		case 'ORDER_NOTE_FAIL':
+			return { loading: false, error: action.payload };
+		default:
+			return state;
+	}
+};

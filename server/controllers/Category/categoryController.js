@@ -17,12 +17,12 @@ const getCategories = Async(async (req, res) => {
 });
 
 const updateCategory = Async(async (req, res) => {
-	const { name } = req.body;
+	const { name, image } = req.body;
 	const updated = await Category.findOneAndUpdate(
 		{
 			slug: req.params.slug,
 		},
-		{ name, slug: slugify(name) },
+		{ name, slug: slugify(name), image },
 		{ new: true }
 	);
 

@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const Order = require('../../models/Order');
+const User = require('../../models/User');
 
 // @desc    Create new order
 // @route    POST /api/orders
@@ -14,7 +15,9 @@ const addOrderItems = asyncHandler(async (req, res) => {
 		shippingPrice,
 		totalPrice,
 	} = req.body;
-
+	const { email } = req.user;
+	let user = await User.findOne({ email }).exec();
+	user = user && user._id;
 	if (orderItems && orderItems.length === 0) {
 		res.status(400);
 		throw new Error('No order items');
@@ -22,7 +25,7 @@ const addOrderItems = asyncHandler(async (req, res) => {
 	} else {
 		const order = new Order({
 			orderItems,
-			user: req.user._id,
+			user,
 			shippingAddress,
 			paymentMethod,
 			itemsPrice,
@@ -112,6 +115,25 @@ const getAllOrders = asyncHandler(async (req, res) => {
 	res.json(orders);
 });
 
+// @desc    Add Note
+// @route    Post /api/orders/_id/note
+// @access    Private/Admin
+const addNote = asyncHandler(async (req, res) => {
+	const { note } = req.body;
+	const order = await Order.findById(req.params.id);
+
+	if (order) {
+		order.note = note ? note : '';
+
+		const updatedOrder = await order.save();
+
+		res.json(updatedOrder);
+	} else {
+		res.status(404);
+		throw new Error('Order not found');
+	}
+});
+
 module.exports = {
 	addOrderItems,
 	getOrderById,
@@ -119,4 +141,5 @@ module.exports = {
 	updateOrderToDelivered,
 	getMyOrders,
 	getAllOrders,
+	addNote,
 };

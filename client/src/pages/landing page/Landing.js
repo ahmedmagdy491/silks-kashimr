@@ -8,22 +8,21 @@ import './assets/landingPage.css';
 const Landing = () => {
 	const dispatch = useDispatch();
 	const { catList } = useSelector((state) => ({ ...state }));
-	const { loading, error, cats } = catList;
 
 	useEffect(() => {
 		dispatch(listCats());
 	}, [dispatch]);
 	return (
 		<Fragment>
-			{loading ? (
+			{!catList ? (
 				<Loader />
 			) : (
-				cats && (
+				catList && (
 					<div className="landing">
 						<div className="panner-container">
-							<Panner cats={cats} className="panner" />
+							<Panner cats={catList} className="panner" />
 						</div>
-						<Categories cats={cats} />
+						<Categories cats={catList} />
 					</div>
 				)
 			)}

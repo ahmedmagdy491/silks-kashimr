@@ -10,14 +10,12 @@ import {
 	CREATE_CAT_FAIL,
 } from '../constants/catConst';
 
-export const catListReducer = (state = { cats: [] }, action) => {
+export const catListReducer = (state = [], action) => {
 	switch (action.type) {
-		case CAT_LIST_REQUEST:
-			return { loading: true, cats: [] };
 		case CAT_LIST_SUCCESS:
-			return { loading: false, cats: action.payload };
+			return action.payload;
 		case CAT_LIST_FAIL:
-			return { loading: false, error: action.payload };
+			return action.payload;
 		default:
 			return state;
 	}
