@@ -15,12 +15,9 @@ const LoginScreen = ({ history }) => {
 		...state,
 	}));
 	const [loading, setLoading] = useState(false);
-	useEffect(() => {
-		if (userLogin && userLogin.token) history.push('/');
-	}, [userLogin, history]);
 
 	const roleBasedRedirect = (user) => {
-		if (user.role === 'admin') history.push('/admin/dashboard');
+		if (user && user.role === 'admin') history.push('/admin/dashboard');
 		else history.push('/user/history');
 	};
 

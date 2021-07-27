@@ -28,56 +28,21 @@ import { currentUser } from './actions/userActions';
 import ForgetPassword from './pages/Forget Password/ForgetPassword';
 import PannerUpload from './components/Panner/PannerUpload';
 import CategoriesDrawer from './pages/Categories/CategoriesDrawer.js';
+import AddUser from './pages/Add User/AddUser';
 const App = () => {
-	const dispatch = useDispatch();
-	// to check firebase auth state
-	useEffect(() => {
-		const unsubscribe = auth.onAuthStateChanged(async (user) => {
-			if (user) {
-				const idTokenResult = await user.getIdTokenResult();
-				dispatch(currentUser(idTokenResult.token));
-			}
-		});
-		// cleanup
-		return () => unsubscribe();
-	}, [dispatch]);
-
 	const [productVisible, setProductVisible] = useState(false);
 	const [productUpdateVisible, setProductUpdateVisible] = useState(false);
 	const [catVisible, setCatVisible] = useState(false);
 	const [pannerVisible, setPannerVisible] = useState(false);
 	const [catsVisible, setCatsVisible] = useState(false);
-	const showProductDrawer = () => {
-		setProductVisible(true);
-	};
-	const showCatDrawer = () => {
-		setCatVisible(true);
+	const [addUserDrawer, setAddUserVisible] = useState(false);
+
+	const open = (set) => {
+		set(true);
 	};
 
-	const onProductClose = () => {
-		setProductVisible(false);
-	};
-	const onCatClose = () => {
-		setCatVisible(false);
-	};
-	const showUpdateProductDrawer = () => {
-		setProductUpdateVisible(true);
-	};
-	const closeUpdateProductDrawer = () => {
-		setProductUpdateVisible(false);
-	};
-
-	const showPannerDrawer = () => {
-		setPannerVisible(true);
-	};
-	const closePannerDrawer = () => {
-		setPannerVisible(false);
-	};
-	const showCatsDrawer = () => {
-		setCatsVisible(true);
-	};
-	const closeCatsDrawer = () => {
-		setCatsVisible(false);
+	const close = (set) => {
+		set(false);
 	};
 
 	return (
@@ -85,28 +50,38 @@ const App = () => {
 			<Router>
 				<Header />
 				<PannerUpload
-					onClose={closePannerDrawer}
+					onClose={() => close(setPannerVisible)}
 					visible={pannerVisible}
 				/>
 				<AdminMenu
-					showProductDrawer={showProductDrawer}
-					showCatDrawer={showCatDrawer}
-					showPannerDrawer={showPannerDrawer}
-					showCatsDrawer={showCatsDrawer}
+					showProductDrawer={() => open(setProductVisible)}
+					showCatDrawer={() => open(setCatVisible)}
+					showPannerDrawer={() => open(setPannerVisible)}
+					showCatsDrawer={() => open(setCatsVisible)}
+					showAddUserDrawer={() => open(setAddUserVisible)}
 				/>
-				<Create onCatClose={onCatClose} visible={catVisible} />
+				<Create
+					onCatClose={() => close(setCatVisible)}
+					visible={catVisible}
+				/>
 				<CreateProduct
-					onProductClose={onProductClose}
+					onProductClose={() => close(setProductVisible)}
 					visible={productVisible}
 				/>
 				<UpdateProduct
 					visible={productUpdateVisible}
-					closeDrawer={closeUpdateProductDrawer}
+					closeDrawer={() => close(setProductUpdateVisible)}
 				/>
 				<CategoriesDrawer
-					onClose={closeCatsDrawer}
+					onClose={() => close(setCatsVisible)}
 					visible={catsVisible}
 				/>
+
+				<AddUser
+					onClose={() => close(setAddUserVisible)}
+					visible={addUserDrawer}
+				/>
+
 				<Container className="mt-5">
 					<Route path="/" component={LandingPage} exact />
 					<Route path="/signup" component={SignUpScreen} />
@@ -127,7 +102,7 @@ const App = () => {
 						path="/:slug/products"
 						component={(routeProps) => (
 							<Products
-								showDrawer={showUpdateProductDrawer}
+								showDrawer={() => open(setProductUpdateVisible)}
 								{...routeProps}
 							/>
 						)}

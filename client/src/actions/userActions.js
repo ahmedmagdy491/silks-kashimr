@@ -1,3 +1,4 @@
+import { notification } from 'antd';
 import axios from 'axios';
 
 let url = process.env.REACT_APP_API;
@@ -38,44 +39,21 @@ export const login = (email, password) => async (dispatch) => {
 	}
 };
 
-export const signup = (name, email, password) => async (dispatch) => {
+export const signup = (email) => async (dispatch) => {
 	try {
-		dispatch({
-			type: 'USER_SIGNUP_REQUIST',
-		});
+		const { data } = await axios.post(`${url}/user/register`, { email });
 
-		const config = {
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		};
+		if (data.success) {
+			notification.success({
+				message: 'Done !',
+				description: 'the user have been created successfully',
+				placement: 'bottomLeft',
+			});
+		}
 
-		const { data } = await axios.post(
-			`${url}/user/register`,
-			{ name, email, password },
-			config
-		);
-
-		dispatch({
-			type: 'USER_SIGNUP_SUCCESS',
-			payload: data,
-		});
-
-		dispatch({
-			type: 'USER_LOGIN_SUCCESS',
-			payload: data,
-		});
-
-		localStorage.setItem('userInfo', JSON.stringify(data));
+		console.log(data);
 	} catch (error) {
 		console.log(error.response);
-		dispatch({
-			type: 'USER_SIGNUP_FAIL',
-			payload:
-				error.response && error.response.data.message
-					? error.response.data.message
-					: error.message,
-		});
 	}
 };
 
@@ -324,10 +302,20 @@ export const createOrUpdateUserAction = (authtoken) => async (dispatch) => {
 		};
 
 		const { data } = await axios.post(
-			`${url}/create-or-update-user`,
+			`${url}/create-or-login-user`,
 			{},
 			config
 		);
+
+		if (data.success) {
+			notification.success({
+				message: 'Done !',
+				description: 'the user have been created successfully',
+				placement: 'bottomLeft',
+			});
+		}
+
+		console.log('form asdasd', data);
 
 		dispatch({
 			type: 'USER_CREATE_OR_UPDATE_SUCCESS',
@@ -340,7 +328,10 @@ export const createOrUpdateUserAction = (authtoken) => async (dispatch) => {
 			},
 		});
 
-		localStorage.setItem('userInfo', JSON.stringify(data));
+		localStorage.setItem(
+			'userInfo',
+			JSON.stringify({ ...data, token: authtoken })
+		);
 	} catch (error) {
 		console.log(error.response);
 		dispatch({
@@ -372,8 +363,7 @@ export const currentUser = (authtoken) => async (dispatch) => {
 				_id: data._id,
 			},
 		});
-
-		localStorage.setItem('userInfo', JSON.stringify(data));
+		console.log('from current', data);
 	} catch (error) {
 		console.log(error.response);
 		dispatch({

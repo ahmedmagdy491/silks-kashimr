@@ -11,13 +11,13 @@ import Details from './Details';
 import IconList from './IconsList';
 import { addToWishListAction } from './../../../actions/userActions';
 import { Badge, message, Popover } from 'antd';
-import { FaTag } from 'react-icons/fa';
+import { deleteProductAction } from '../../../actions/productActions';
 
 const Product = ({ product, showDrawer }) => {
 	const [src, setSrc] = useState(product.images[0]);
 	const [inWishlist, setInWishlist] = useState(false);
 	const history = useHistory();
-	const { addToWishList } = useSelector((state) => ({ ...state }));
+	const { addToWishList, userLogin } = useSelector((state) => ({ ...state }));
 
 	const { error, wishlist } = addToWishList;
 	useEffect(() => {
@@ -42,10 +42,16 @@ const Product = ({ product, showDrawer }) => {
 	};
 
 	const dispatch = useDispatch();
+	const admin = userLogin && userLogin.role === 'admin' && userLogin.role;
+	const token = userLogin && userLogin.token;
 
 	const addItemToWishList = async (e) => {
 		e.preventDefault();
 		dispatch(addToWishListAction(product.slug));
+	};
+	const deleteProduct = (e) => {
+		e.preventDefault();
+		dispatch(deleteProductAction(token, product.slug));
 	};
 	const content = (
 		<div className="row justify-content-around">
@@ -56,7 +62,7 @@ const Product = ({ product, showDrawer }) => {
 					localStorage.setItem('slug', JSON.stringify(product.slug));
 				}}
 			/>
-			<AiFillDelete className="btn-danger h3" />
+			<AiFillDelete className="btn-danger h3" onClick={deleteProduct} />
 		</div>
 	);
 	return (
@@ -66,6 +72,7 @@ const Product = ({ product, showDrawer }) => {
 					<img
 						src="https://image.flaticon.com/icons/png/512/1831/1831655.png"
 						className="discount-badge"
+						alt=""
 					/>
 				</Badge>
 			)}

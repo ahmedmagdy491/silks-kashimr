@@ -21,6 +21,17 @@ export const catListReducer = (state = [], action) => {
 	}
 };
 
+export const catReducer = (state = {}, action) => {
+	switch (action.type) {
+		case 'CAT_SUCCESS':
+			return action.payload;
+		case 'CAT_FAIL':
+			return action.payload;
+		default:
+			return state;
+	}
+};
+
 export const catProductListReducer = (state = { products: [] }, action) => {
 	switch (action.type) {
 		case CAT_PRODUCT_LIST_REQUEST:

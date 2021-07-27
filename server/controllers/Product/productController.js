@@ -27,7 +27,9 @@ const deleteProduct = Async(async (req, res) => {
 	const { slug } = req.params;
 	const product = await Product.findOne({ slug });
 	await product.remove();
-	res.json(product);
+	res.json({
+		success: true,
+	});
 });
 
 const getProducts = Async(async (req, res) => {

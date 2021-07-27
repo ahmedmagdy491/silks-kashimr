@@ -5,6 +5,7 @@ import {
 	catListReducer,
 	catProductListReducer,
 	createCatReducer,
+	catReducer,
 } from './reducers/categoryReducer';
 import {
 	productCreateReducer,
@@ -23,7 +24,6 @@ import {
 	userUpdateReducer,
 	addToWishListReducer,
 	createOrUpdateUserReducer,
-	currentUserReducer,
 } from './reducers/userReducers.js';
 
 import {
@@ -36,10 +36,9 @@ import {
 	addNoteReducer,
 } from './reducers/orderReducer';
 const reducer = combineReducers({
-	userLogin: currentUserReducer,
+	userLogin: createOrUpdateUserReducer,
 	userDetails: userDetailsReducer,
 	userUpdateProfile: userUpdateProfileReducer,
-	createOrUpdateUser: createOrUpdateUserReducer,
 	userList: userListReducer,
 	userDelete: userDeleteReducer,
 	userUpdate: userUpdateReducer,
@@ -49,6 +48,7 @@ const reducer = combineReducers({
 	productUpdate: productUpdateReducer,
 	productList: productListReducer,
 	catProductList: catProductListReducer,
+	cat: catReducer,
 	productDetails: productDetailsReducer,
 	cart: cartReducer,
 	createCat: createCatReducer,

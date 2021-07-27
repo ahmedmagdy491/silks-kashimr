@@ -15,7 +15,6 @@ router.post('/uploadimages', uploadImgs.array('file'), (req, res, next) => {
 
 router.post('/uploadimage', uploadImgs.single('file'), (req, res, next) => {
 	let { path } = req.file;
-
 	res.send(path);
 });
 module.exports = router;

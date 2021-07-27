@@ -10,6 +10,7 @@ import {
 	CREATE_CAT_FAIL,
 } from '../constants/catConst';
 import axios from 'axios';
+import { notification } from 'antd';
 let url = process.env.REACT_APP_API;
 
 export const listCats = () => async (dispatch) => {
@@ -33,41 +34,86 @@ export const listCats = () => async (dispatch) => {
 	}
 };
 
-export const createCatAction = (name, image) => async (dispatch, getState) => {
+export const getCat = (authtoken, slug) => async (dispatch) => {
 	try {
-		dispatch({ type: CREATE_CAT_REQUEST });
-		const {
-			userLogin: { userInfo },
-		} = getState();
+		dispatch({ type: 'CAT_REQUEST' });
+
 		const config = {
 			headers: {
-				'Content-Type': 'application/json',
-				Authorization: `Bearer ${userInfo.token}`,
+				authtoken,
 			},
 		};
-		const { data } = await axios.post(
-			`${url}/category`,
-			{
-				name,
-				image,
+		const { data } = await axios.get(`${url}/category/${slug}`, config);
+		dispatch({
+			type: 'CAT_SUCCESS',
+			payload: data,
+		});
+	} catch (error) {
+		console.log(error.response);
+	}
+};
+
+export const createCatAction = (authtoken, values) => async (dispatch) => {
+	try {
+		dispatch({ type: CREATE_CAT_REQUEST });
+
+		const config = {
+			headers: {
+				authtoken,
 			},
-			config
-		);
+		};
+		const { data } = await axios.post(`${url}/category`, values, config);
 
 		dispatch({
 			type: CREATE_CAT_SUCCESS,
 			payload: data,
 		});
+
+		if (data.success === true) {
+			notification.success({
+				message: 'Category has been created',
+				placement: 'bottomLeft',
+			});
+		}
 	} catch (err) {
-		dispatch({
-			type: CREATE_CAT_FAIL,
-			payload:
-				err.response && err.response.data
-					? err.response.data
-					: err.data,
-		});
+		if (err) {
+			notification.error({
+				message: err.response.data.message,
+				placement: 'bottomLeft',
+			});
+		}
 	}
 };
+
+export const updateCatAction =
+	(authtoken, values, slug) => async (dispatch) => {
+		try {
+			const config = {
+				headers: {
+					authtoken,
+				},
+			};
+			const { data } = await axios.put(
+				`${url}/category/${slug}`,
+				values,
+				config
+			);
+
+			if (data.success === true) {
+				notification.success({
+					message: 'Category has been updated',
+					placement: 'bottomLeft',
+				});
+			}
+		} catch (err) {
+			if (err) {
+				notification.error({
+					message: err.response.data.message,
+					placement: 'bottomLeft',
+				});
+			}
+		}
+	};
 
 export const listCatProduct = (slug) => async (dispatch) => {
 	try {

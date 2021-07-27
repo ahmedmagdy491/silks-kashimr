@@ -23,6 +23,7 @@ const AdminMenu = ({
 	showCatDrawer,
 	showPannerDrawer,
 	showCatsDrawer,
+	showAddUserDrawer,
 }) => {
 	const [mode, setMode] = React.useState('inline');
 	const [theme, setTheme] = React.useState('light');
@@ -75,7 +76,9 @@ const AdminMenu = ({
 					<Menu.Item key="6">Get All Products</Menu.Item>
 				</SubMenu>
 				<SubMenu key="sub3" icon={<AppstoreOutlined />} title="User">
-					<Menu.Item key="7">Add New User</Menu.Item>
+					<Menu.Item key="7" onClick={showAddUserDrawer}>
+						Add New User
+					</Menu.Item>
 					<Menu.Item key="8">Get All Users</Menu.Item>
 				</SubMenu>
 				<Menu.Item key="orders" icon={<LinkOutlined />}>

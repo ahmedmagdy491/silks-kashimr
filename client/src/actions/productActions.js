@@ -13,6 +13,7 @@ import {
 	PRODUCT_CREATE_REVIEW_FAIL,
 } from '../constants/productConst';
 import axios from 'axios';
+import { notification } from 'antd';
 
 let url = process.env.REACT_APP_API;
 
@@ -164,3 +165,28 @@ export const createProductReview =
 			});
 		}
 	};
+
+export const deleteProductAction = (authtoken, slug) => async (dispatch) => {
+	try {
+		const config = {
+			headers: {
+				authtoken,
+			},
+		};
+		const { data } = await axios.delete(`${url}/product/${slug}`, config);
+		console.log(data);
+		if (data.success) {
+			notification.warning({
+				message: 'product has been deleted',
+				placement: 'bottomLeft',
+			});
+		}
+	} catch (err) {
+		if (err) {
+			notification.error({
+				message: err.response.data.err,
+				placement: 'bottomLeft',
+			});
+		}
+	}
+};
